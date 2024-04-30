@@ -17,23 +17,23 @@ namespace ApplicationManager.Utils
 
         #endregion
 
-        public delegate void TransferValueDelegateHandler(string value);
+        public delegate void CommandValueDelegate(string value);
 
-        public void ExecuteCommand(string exePath, string arguments, TransferValueDelegateHandler delegateHandler) {
+        public void ExecuteCommand(string arguments, CommandValueDelegate valueDelegate)
+        {
             using (var process = new Process())
             {
-                process.StartInfo.FileName = exePath;
+                process.StartInfo.FileName = "adb";
                 process.StartInfo.Arguments = arguments;
-                // 必须禁用操作系统外壳程序  
                 process.StartInfo.UseShellExecute = false;
                 process.StartInfo.CreateNoWindow = true;
                 process.StartInfo.RedirectStandardOutput = true;
                 process.StartInfo.RedirectStandardError = true;
-
+            
                 process.Start();
-
-                delegateHandler(process.StandardOutput.ReadToEnd().Trim());
-
+            
+                valueDelegate(process.StandardOutput.ReadToEnd().Trim());
+            
                 process.WaitForExit();
                 process.Close();
             }
