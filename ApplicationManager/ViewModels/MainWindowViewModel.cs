@@ -1,8 +1,14 @@
-﻿using Prism.Commands;
+﻿using System;
+using ApplicationManager.Utils;
+using Prism.Commands;
 using Prism.Mvvm;
 
 namespace ApplicationManager.ViewModels
 {
+    /// <summary>
+    /// 所有的View必须在Views包下面
+    /// 所有的ViewModel必须在ViewModels包下面
+    /// </summary>
     public class MainWindowViewModel : BindableBase
     {
         #region VM
@@ -238,5 +244,14 @@ namespace ApplicationManager.ViewModels
         public DelegateCommand InstallCommand { set; get; }
 
         #endregion
+
+        public MainWindowViewModel()
+        {
+            RefreshDeviceCommand = new DelegateCommand(delegate
+            {
+                CommandManager.Get.ExecuteCommand("adb", " devices",
+                    delegate(string value) { Console.WriteLine(value); });
+            });
+        }
     }
 }

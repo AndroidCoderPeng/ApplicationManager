@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using ApplicationManager.Views;
 using Prism.DryIoc;
 using Prism.Ioc;
 
@@ -12,11 +13,6 @@ namespace ApplicationManager
         protected override Window CreateShell()
         {
             return Container.Resolve<MainWindow>();
-        }
-
-        protected override void InitializeShell(Window shell)
-        {
-            base.InitializeShell(shell);
         }
 
         protected override void RegisterTypes(IContainerRegistry containerRegistry)

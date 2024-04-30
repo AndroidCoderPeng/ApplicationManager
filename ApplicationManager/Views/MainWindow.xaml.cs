@@ -1,6 +1,4 @@
-﻿using System.ComponentModel;
-
-namespace ApplicationManager
+﻿namespace ApplicationManager.Views
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -12,10 +10,10 @@ namespace ApplicationManager
             InitializeComponent();
         }
 
-        protected override void OnClosing(CancelEventArgs e)
-        {
-            Hide();
-            e.Cancel = true;
-        }
+        // protected override void OnClosing(CancelEventArgs e)
+        // {
+        //     Hide();
+        //     e.Cancel = true;
+        // }
     }
 }

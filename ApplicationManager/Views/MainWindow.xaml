@@ -1,5 +1,5 @@
 ﻿<Window
-    x:Class="ApplicationManager.MainWindow"
+    x:Class="ApplicationManager.Views.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -519,22 +519,22 @@
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
-            <hc:NotifyIcon
-                Grid.Column="0"
-                Icon="/ApplicationManager;component/Images/launcher.ico"
-                Text="Android软件包管理（Android Package Management）">
-                <hc:NotifyIcon.ContextMenu>
-                    <ContextMenu>
-                        <MenuItem Command="hc:ControlCommands.PushMainWindow2Top" Header="打开主界面" />
-                        <MenuItem Command="hc:ControlCommands.ShutdownApp" Header="退出程序" />
-                    </ContextMenu>
-                </hc:NotifyIcon.ContextMenu>
-                <hc:Interaction.Triggers>
-                    <hc:EventTrigger EventName="Click">
-                        <hc:EventToCommand Command="hc:ControlCommands.PushMainWindow2Top" />
-                    </hc:EventTrigger>
-                </hc:Interaction.Triggers>
-            </hc:NotifyIcon>
+            <!--  <hc:NotifyIcon  -->
+            <!--  Grid.Column="0"  -->
+            <!--  Icon="/ApplicationManager;component/Images/launcher.ico"  -->
+            <!--  Text="Android软件包管理（Android Package Management）">  -->
+            <!--     <hc:NotifyIcon.ContextMenu> -->
+            <!--         <ContextMenu> -->
+            <!--             <MenuItem Command="hc:ControlCommands.PushMainWindow2Top" Header="打开主界面" /> -->
+            <!--             <MenuItem Command="hc:ControlCommands.ShutdownApp" Header="退出程序" /> -->
+            <!--         </ContextMenu> -->
+            <!--     </hc:NotifyIcon.ContextMenu> -->
+            <!--     <hc:Interaction.Triggers> -->
+            <!--         <hc:EventTrigger EventName="Click"> -->
+            <!--             <hc:EventToCommand Command="hc:ControlCommands.PushMainWindow2Top" /> -->
+            <!--         </hc:EventTrigger> -->
+            <!--     </hc:Interaction.Triggers> -->
+            <!-- </hc:NotifyIcon> -->
 
             <!--  设备已就绪，点击“安装”即可自动安装  -->
             <TextBlock
