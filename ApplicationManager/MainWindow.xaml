@@ -261,7 +261,6 @@
                                         Text="8G/16G" />
 
                                     <hc:WaveProgressBar
-                                        Grid.Row="10"
                                         Width="110"
                                         Height="110"
                                         Margin="0,10,0,0"
@@ -290,7 +289,6 @@
                                         Text="正在充电" />
 
                                     <ProgressBar
-                                        Grid.Row="12"
                                         Margin="0,10,0,0"
                                         Style="{StaticResource ProgressBarSuccess}"
                                         Value="50 " />
@@ -351,9 +349,9 @@
                             Grid.Row="1"
                             Margin="0,10"
                             Columns="2">
-                            <Button Grid.Row="1" Content="导出截屏到电脑" />
+                            <Button Content="导出截屏到电脑" />
 
-                            <Button Grid.Row="1" Content="复制图片到设备" />
+                            <Button Content="复制图片到设备" />
                         </UniformGrid>
 
                         <Button Grid.Row="2" Content="截屏" />
@@ -378,7 +376,6 @@
                             <Button Margin="0,0,0,15" Content="选择文件" />
 
                             <TextBlock
-                                Grid.Row="1"
                                 Margin="0,0,0,15"
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Bottom"
@@ -491,9 +488,9 @@
                         Grid.Row="2"
                         Margin="10,0,10,10"
                         Columns="2">
-                        <Button Grid.Row="1" Content="卸载" />
+                        <Button Content="卸载" />
 
-                        <Button Grid.Row="1" Content="安装" />
+                        <Button Content="安装" />
                     </UniformGrid>
                 </Grid>
             </Grid>
