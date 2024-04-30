@@ -5,392 +5,77 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:hc="https://handyorg.github.io/handycontrol"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vm="clr-namespace:ApplicationManager.ViewModels"
     Title="Android软件包管理（Android Package Management）"
     Width="900"
     Height="755"
+    d:DataContext="{d:DesignInstance Type=vm:MainWindowViewModel}"
     ResizeMode="CanMinimize"
     WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">
     <Grid>
-        <Grid>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*" />
-                <RowDefinition Height="0.5" />
-                <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="0.5" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
 
-            <Grid Grid.Row="0">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="1.25*" />
-                    <ColumnDefinition Width="1*" />
-                    <ColumnDefinition Width="1.25*" />
-                </Grid.ColumnDefinitions>
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1.25*" />
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1.25*" />
+            </Grid.ColumnDefinitions>
 
-                <Grid Grid.Column="0">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition />
-                    </Grid.RowDefinitions>
+            <Grid Grid.Column="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
 
-                    <Grid Grid.Row="0" Margin="10">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-
-                        <TextBlock
-                            Grid.Column="0"
-                            VerticalAlignment="Center"
-                            FontSize="14"
-                            Text="选择设备" />
-
-                        <ComboBox Grid.Column="1" Margin="10,0" />
-
-                        <Button Grid.Column="2" Content="刷新" />
-                    </Grid>
-
-                    <Border
-                        Grid.Row="1"
-                        Margin="10,0,10,10"
-                        BorderBrush="LightGray"
-                        BorderThickness="0.5">
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                            </Grid.RowDefinitions>
-
-                            <Grid Grid.Row="0" Margin="10">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="2*" />
-                                </Grid.ColumnDefinitions>
-
-                                <TextBlock
-                                    Grid.Column="0"
-                                    VerticalAlignment="Center"
-                                    FontSize="14"
-                                    Text="Android ID" />
-
-                                <TextBlock
-                                    Grid.Column="1"
-                                    VerticalAlignment="Center"
-                                    FontSize="14"
-                                    Text="b893b5cc625127cb" />
-                            </Grid>
-
-                            <Grid Grid.Row="1" Margin="10">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="2*" />
-                                </Grid.ColumnDefinitions>
-
-                                <TextBlock
-                                    Grid.Column="0"
-                                    VerticalAlignment="Center"
-                                    FontSize="14"
-                                    Text="设备型号" />
-
-                                <TextBlock
-                                    Grid.Column="1"
-                                    VerticalAlignment="Center"
-                                    FontSize="14"
-                                    Text="PHP110" />
-                            </Grid>
-
-                            <Grid Grid.Row="2" Margin="10">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="2*" />
-                                </Grid.ColumnDefinitions>
-
-                                <TextBlock
-                                    Grid.Column="0"
-                                    VerticalAlignment="Center"
-                                    FontSize="14"
-                                    Text="设备品牌" />
-
-                                <TextBlock
-                                    Grid.Column="1"
-                                    VerticalAlignment="Center"
-                                    FontSize="14"
-                                    Text="OnePlus" />
-                            </Grid>
-
-                            <Grid Grid.Row="3" Margin="10">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="2*" />
-                                </Grid.ColumnDefinitions>
-
-                                <TextBlock
-                                    Grid.Column="0"
-                                    VerticalAlignment="Center"
-                                    FontSize="14"
-                                    Text="设备名称" />
-
-                                <TextBlock
-                                    Grid.Column="1"
-                                    VerticalAlignment="Center"
-                                    FontSize="14"
-                                    Text="PHP110" />
-                            </Grid>
-
-                            <Grid Grid.Row="4" Margin="10">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="2*" />
-                                </Grid.ColumnDefinitions>
-
-                                <TextBlock
-                                    Grid.Column="0"
-                                    VerticalAlignment="Center"
-                                    FontSize="14"
-                                    Text="处理器型号" />
-
-                                <TextBlock
-                                    Grid.Column="1"
-                                    VerticalAlignment="Center"
-                                    FontSize="14"
-                                    Text="k6983v1_64" />
-                            </Grid>
-
-                            <Grid Grid.Row="5" Margin="10">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="2*" />
-                                </Grid.ColumnDefinitions>
-
-                                <TextBlock
-                                    Grid.Column="0"
-                                    VerticalAlignment="Center"
-                                    FontSize="14"
-                                    Text="ABI架构" />
-
-                                <TextBlock
-                                    Grid.Column="1"
-                                    VerticalAlignment="Center"
-                                    FontSize="14"
-                                    Text="arm64-v8a,armeabi-v7a,armeabi"
-                                    TextWrapping="Wrap" />
-                            </Grid>
-
-                            <Grid Grid.Row="6" Margin="10">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="2*" />
-                                </Grid.ColumnDefinitions>
-
-                                <TextBlock
-                                    Grid.Column="0"
-                                    VerticalAlignment="Center"
-                                    FontSize="14"
-                                    Text="Android版本" />
-
-                                <TextBlock
-                                    Grid.Column="1"
-                                    VerticalAlignment="Center"
-                                    FontSize="14"
-                                    Text="14" />
-                            </Grid>
-
-                            <Grid Grid.Row="7" Margin="10">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="2*" />
-                                </Grid.ColumnDefinitions>
-
-                                <TextBlock
-                                    Grid.Column="0"
-                                    VerticalAlignment="Center"
-                                    FontSize="14"
-                                    Text="屏幕分辨率" />
-
-                                <TextBlock
-                                    Grid.Column="1"
-                                    VerticalAlignment="Center"
-                                    FontSize="14"
-                                    Text="1240x2772" />
-                            </Grid>
-
-                            <Grid Grid.Row="8" Margin="10">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="2*" />
-                                </Grid.ColumnDefinitions>
-
-                                <TextBlock
-                                    Grid.Column="0"
-                                    VerticalAlignment="Center"
-                                    FontSize="14"
-                                    Text="屏幕密度" />
-
-                                <TextBlock
-                                    Grid.Column="1"
-                                    VerticalAlignment="Center"
-                                    FontSize="14"
-                                    Text="560" />
-                            </Grid>
-
-                            <Grid Grid.Row="9" Margin="10">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="2*" />
-                                </Grid.ColumnDefinitions>
-
-                                <TextBlock
-                                    Grid.Column="0"
-                                    FontSize="14"
-                                    Text="内存信息" />
-
-                                <StackPanel Grid.Column="1" Orientation="Vertical">
-                                    <TextBlock
-                                        VerticalAlignment="Center"
-                                        FontSize="14"
-                                        Text="8G/16G" />
-
-                                    <hc:WaveProgressBar
-                                        Width="110"
-                                        Height="110"
-                                        Margin="0,10,0,0"
-                                        HorizontalAlignment="Left"
-                                        ShowText="False"
-                                        Style="{StaticResource ProgressBarSuccessWave}"
-                                        Value="50 " />
-                                </StackPanel>
-                            </Grid>
-
-                            <Grid Grid.Row="10" Margin="10">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="2*" />
-                                </Grid.ColumnDefinitions>
-
-                                <TextBlock
-                                    Grid.Column="0"
-                                    FontSize="14"
-                                    Text="电池状态" />
-
-                                <StackPanel Grid.Column="1" Orientation="Vertical">
-                                    <TextBlock
-                                        VerticalAlignment="Center"
-                                        FontSize="14"
-                                        Text="正在充电" />
-
-                                    <ProgressBar
-                                        Margin="0,10,0,0"
-                                        Style="{StaticResource ProgressBarSuccess}"
-                                        Value="50 " />
-                                </StackPanel>
-                            </Grid>
-
-                            <Grid Grid.Row="11" Margin="10">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="2*" />
-                                </Grid.ColumnDefinitions>
-
-                                <TextBlock
-                                    Grid.Column="0"
-                                    VerticalAlignment="Center"
-                                    FontSize="14"
-                                    Text="电池温度" />
-
-                                <TextBlock
-                                    Grid.Column="1"
-                                    VerticalAlignment="Center"
-                                    FontSize="14"
-                                    Text="25℃" />
-                            </Grid>
-                        </Grid>
-                    </Border>
-                </Grid>
-
-                <Grid Grid.Column="1">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="*" />
-                        <RowDefinition Height="Auto" />
-                    </Grid.RowDefinitions>
+                <Grid Grid.Row="0" Margin="10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
 
                     <TextBlock
                         Grid.Column="0"
-                        Margin="10"
                         VerticalAlignment="Center"
                         FontSize="14"
-                        Text="非系统软件包" />
+                        Text="选择设备" />
 
-                    <ListView Grid.Row="1" Margin="10,0" />
+                    <ComboBox
+                        Grid.Column="1"
+                        Margin="10,0"
+                        ItemsSource="{Binding DeviceItems}" />
 
-                    <Grid Grid.Row="2" Margin="10">
-                        <Grid.RowDefinitions>
-                            <RowDefinition />
-                            <RowDefinition />
-                            <RowDefinition />
-                        </Grid.RowDefinitions>
-
-                        <UniformGrid Grid.Row="0" Columns="2">
-                            <Button Content="重启设备" />
-                            <Button Content="断开设备" />
-                        </UniformGrid>
-
-                        <UniformGrid
-                            Grid.Row="1"
-                            Margin="0,10"
-                            Columns="2">
-                            <Button Content="导出截屏到电脑" />
-
-                            <Button Content="复制图片到设备" />
-                        </UniformGrid>
-
-                        <Button Grid.Row="2" Content="截屏" />
-                    </Grid>
+                    <Button
+                        Grid.Column="2"
+                        Command="{Binding RefreshDeviceCommand}"
+                        Content="刷新" />
                 </Grid>
 
-                <Grid Grid.Column="2">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="*" />
-                        <RowDefinition Height="Auto" />
-                    </Grid.RowDefinitions>
-
-                    <Border
-                        Grid.Row="0"
-                        Height="120"
-                        Margin="10"
-                        BorderBrush="LightGray"
-                        BorderThickness="0.5">
-
-                        <Grid>
-                            <Button Margin="0,0,0,15" Content="选择文件" />
-
-                            <TextBlock
-                                Margin="0,0,0,15"
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Bottom"
-                                FontSize="14"
-                                Text="将安装包拖到此处或者点击“+”添加" />
-                        </Grid>
-                    </Border>
-
-                    <Grid Grid.Row="1">
+                <Border
+                    Grid.Row="1"
+                    Margin="10,0,10,10"
+                    BorderBrush="LightGray"
+                    BorderThickness="0.5">
+                    <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
-                            <RowDefinition Height="*" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
 
                         <Grid Grid.Row="0" Margin="10">
@@ -403,13 +88,13 @@
                                 Grid.Column="0"
                                 VerticalAlignment="Center"
                                 FontSize="14"
-                                Text="软件名" />
+                                Text="Android ID" />
 
                             <TextBlock
                                 Grid.Column="1"
                                 VerticalAlignment="Center"
                                 FontSize="14"
-                                Text="Android软件包管理" />
+                                Text="{Binding AndroidId}" />
                         </Grid>
 
                         <Grid Grid.Row="1" Margin="10">
@@ -422,13 +107,13 @@
                                 Grid.Column="0"
                                 VerticalAlignment="Center"
                                 FontSize="14"
-                                Text="软件包名" />
+                                Text="设备型号" />
 
                             <TextBlock
                                 Grid.Column="1"
                                 VerticalAlignment="Center"
                                 FontSize="14"
-                                Text="com.casic.detector" />
+                                Text="{Binding DeviceModel}" />
                         </Grid>
 
                         <Grid Grid.Row="2" Margin="10">
@@ -441,13 +126,13 @@
                                 Grid.Column="0"
                                 VerticalAlignment="Center"
                                 FontSize="14"
-                                Text="软件版本" />
+                                Text="设备品牌" />
 
                             <TextBlock
                                 Grid.Column="1"
                                 VerticalAlignment="Center"
                                 FontSize="14"
-                                Text="5.0.6" />
+                                Text="{Binding DeviceBrand}" />
                         </Grid>
 
                         <Grid Grid.Row="3" Margin="10">
@@ -460,13 +145,13 @@
                                 Grid.Column="0"
                                 VerticalAlignment="Center"
                                 FontSize="14"
-                                Text="文件大小" />
+                                Text="设备名称" />
 
                             <TextBlock
                                 Grid.Column="1"
                                 VerticalAlignment="Center"
                                 FontSize="14"
-                                Text="100M" />
+                                Text="{Binding DeviceName}" />
                         </Grid>
 
                         <Grid Grid.Row="4" Margin="10">
@@ -477,45 +162,386 @@
 
                             <TextBlock
                                 Grid.Column="0"
+                                VerticalAlignment="Center"
                                 FontSize="14"
-                                Text="软件权限" />
+                                Text="处理器型号" />
 
-                            <ListView Grid.Column="1" />
+                            <TextBlock
+                                Grid.Column="1"
+                                VerticalAlignment="Center"
+                                FontSize="14"
+                                Text="{Binding DeviceCpu}" />
+                        </Grid>
+
+                        <Grid Grid.Row="5" Margin="10">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="2*" />
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock
+                                Grid.Column="0"
+                                VerticalAlignment="Center"
+                                FontSize="14"
+                                Text="ABI架构" />
+
+                            <TextBlock
+                                Grid.Column="1"
+                                VerticalAlignment="Center"
+                                FontSize="14"
+                                Text="{Binding DeviceAbi}"
+                                TextWrapping="Wrap" />
+                        </Grid>
+
+                        <Grid Grid.Row="6" Margin="10">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="2*" />
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock
+                                Grid.Column="0"
+                                VerticalAlignment="Center"
+                                FontSize="14"
+                                Text="Android版本" />
+
+                            <TextBlock
+                                Grid.Column="1"
+                                VerticalAlignment="Center"
+                                FontSize="14"
+                                Text="{Binding AndroidVersion}" />
+                        </Grid>
+
+                        <Grid Grid.Row="7" Margin="10">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="2*" />
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock
+                                Grid.Column="0"
+                                VerticalAlignment="Center"
+                                FontSize="14"
+                                Text="屏幕分辨率" />
+
+                            <TextBlock
+                                Grid.Column="1"
+                                VerticalAlignment="Center"
+                                FontSize="14"
+                                Text="{Binding DeviceSize}" />
+                        </Grid>
+
+                        <Grid Grid.Row="8" Margin="10">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="2*" />
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock
+                                Grid.Column="0"
+                                VerticalAlignment="Center"
+                                FontSize="14"
+                                Text="屏幕密度" />
+
+                            <TextBlock
+                                Grid.Column="1"
+                                VerticalAlignment="Center"
+                                FontSize="14"
+                                Text="{Binding DeviceDensity}" />
+                        </Grid>
+
+                        <Grid Grid.Row="9" Margin="10">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="2*" />
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock
+                                Grid.Column="0"
+                                FontSize="14"
+                                Text="内存信息" />
+
+                            <StackPanel Grid.Column="1" Orientation="Vertical">
+                                <TextBlock
+                                    VerticalAlignment="Center"
+                                    FontSize="14"
+                                    Text="8G/16G" />
+
+                                <hc:WaveProgressBar
+                                    Width="110"
+                                    Height="110"
+                                    Margin="0,10,0,0"
+                                    HorizontalAlignment="Left"
+                                    ShowText="False"
+                                    Style="{StaticResource ProgressBarSuccessWave}"
+                                    Value="{Binding Memory}" />
+                            </StackPanel>
+                        </Grid>
+
+                        <Grid Grid.Row="10" Margin="10">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="2*" />
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock
+                                Grid.Column="0"
+                                FontSize="14"
+                                Text="电池状态" />
+
+                            <StackPanel Grid.Column="1" Orientation="Vertical">
+                                <TextBlock
+                                    VerticalAlignment="Center"
+                                    FontSize="14"
+                                    Text="{Binding BatteryState}" />
+
+                                <ProgressBar
+                                    Margin="0,7,0,0"
+                                    Style="{StaticResource ProgressBarSuccess}"
+                                    Value="{Binding Battery}" />
+                            </StackPanel>
+                        </Grid>
+
+                        <Grid Grid.Row="11" Margin="10">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="2*" />
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock
+                                Grid.Column="0"
+                                VerticalAlignment="Center"
+                                FontSize="14"
+                                Text="电池温度" />
+
+                            <TextBlock
+                                Grid.Column="1"
+                                VerticalAlignment="Center"
+                                FontSize="14"
+                                Text="{Binding BatteryTemperature}" />
                         </Grid>
                     </Grid>
+                </Border>
+            </Grid>
+
+            <Grid Grid.Column="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <TextBlock
+                    Grid.Column="0"
+                    Margin="10"
+                    VerticalAlignment="Center"
+                    FontSize="14"
+                    Text="非系统软件包" />
+
+                <ListView
+                    Grid.Row="1"
+                    Margin="10,0"
+                    ItemsSource="{Binding ApplicationPackages}" />
+
+                <Grid Grid.Row="2" Margin="10">
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                        <RowDefinition />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+
+                    <UniformGrid Grid.Row="0" Columns="2">
+                        <Button Command="{Binding RebootDeviceCommand}" Content="重启设备" />
+                        <Button Command="{Binding DisconnectDeviceCommand}" Content="断开设备" />
+                    </UniformGrid>
 
                     <UniformGrid
-                        Grid.Row="2"
-                        Margin="10,0,10,10"
+                        Grid.Row="1"
+                        Margin="0,10"
                         Columns="2">
-                        <Button Content="卸载" />
+                        <Button Command="{Binding OutputImageCommand}" Content="导出截屏到电脑" />
 
-                        <Button Content="安装" />
+                        <Button Command="{Binding ImportImageCommand}" Content="复制图片到设备" />
                     </UniformGrid>
+
+                    <Button
+                        Grid.Row="2"
+                        Command="{Binding ScreenshotCommand}"
+                        Content="截屏" />
                 </Grid>
             </Grid>
 
-            <Grid Grid.Row="1" Background="LightGray" />
+            <Grid Grid.Column="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
 
-            <TextBlock
-                Grid.Row="2"
-                Margin="10"
-                HorizontalAlignment="Right"
-                FontSize="14"
-                Text="设备已就绪，点击“安装”即可自动安装" />
+                <Border
+                    Grid.Row="0"
+                    Height="120"
+                    Margin="10"
+                    BorderBrush="LightGray"
+                    BorderThickness="0.5">
+
+                    <Grid>
+                        <Button
+                            Margin="0,0,0,15"
+                            Command="{Binding SelectFileCommand}"
+                            Content="选择文件" />
+
+                        <TextBlock
+                            Margin="0,0,0,15"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Bottom"
+                            FontSize="14"
+                            Text="将安装包拖到此处或者点击“+”添加" />
+                    </Grid>
+                </Border>
+
+                <Grid Grid.Row="1">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+
+                    <Grid Grid.Row="0" Margin="10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="2*" />
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock
+                            Grid.Column="0"
+                            VerticalAlignment="Center"
+                            FontSize="14"
+                            Text="软件名" />
+
+                        <TextBlock
+                            Grid.Column="1"
+                            VerticalAlignment="Center"
+                            FontSize="14"
+                            Text="{Binding ApplicationName}" />
+                    </Grid>
+
+                    <Grid Grid.Row="1" Margin="10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="2*" />
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock
+                            Grid.Column="0"
+                            VerticalAlignment="Center"
+                            FontSize="14"
+                            Text="软件包名" />
+
+                        <TextBlock
+                            Grid.Column="1"
+                            VerticalAlignment="Center"
+                            FontSize="14"
+                            Text="{Binding PackageName}" />
+                    </Grid>
+
+                    <Grid Grid.Row="2" Margin="10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="2*" />
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock
+                            Grid.Column="0"
+                            VerticalAlignment="Center"
+                            FontSize="14"
+                            Text="软件版本" />
+
+                        <TextBlock
+                            Grid.Column="1"
+                            VerticalAlignment="Center"
+                            FontSize="14"
+                            Text="{Binding ApplicationVersion}" />
+                    </Grid>
+
+                    <Grid Grid.Row="3" Margin="10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="2*" />
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock
+                            Grid.Column="0"
+                            VerticalAlignment="Center"
+                            FontSize="14"
+                            Text="文件大小" />
+
+                        <TextBlock
+                            Grid.Column="1"
+                            VerticalAlignment="Center"
+                            FontSize="14"
+                            Text="{Binding FileSize}" />
+                    </Grid>
+
+                    <Grid Grid.Row="4" Margin="10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="2*" />
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock
+                            Grid.Column="0"
+                            FontSize="14"
+                            Text="软件权限" />
+
+                        <ListView Grid.Column="1" ItemsSource="{Binding PermissionItems}" />
+                    </Grid>
+                </Grid>
+
+                <UniformGrid
+                    Grid.Row="2"
+                    Margin="10,0,10,10"
+                    Columns="2">
+                    <Button Command="{Binding UninstallCommand}" Content="卸载" />
+
+                    <Button Command="{Binding InstallCommand}" Content="安装" />
+                </UniformGrid>
+            </Grid>
         </Grid>
-        <hc:NotifyIcon Icon="/Images/launcher.ico" Text="Android软件包管理（Android Package Management）">
-            <hc:NotifyIcon.ContextMenu>
-                <ContextMenu>
-                    <MenuItem Command="hc:ControlCommands.PushMainWindow2Top" Header="打开主界面" />
-                    <MenuItem Command="hc:ControlCommands.ShutdownApp" Header="退出程序" />
-                </ContextMenu>
-            </hc:NotifyIcon.ContextMenu>
-            <hc:Interaction.Triggers>
-                <hc:EventTrigger EventName="Click">
-                    <hc:EventToCommand Command="hc:ControlCommands.PushMainWindow2Top" />
-                </hc:EventTrigger>
-            </hc:Interaction.Triggers>
-        </hc:NotifyIcon>
+
+        <Grid Grid.Row="1" Background="LightGray" />
+
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <hc:NotifyIcon
+                Grid.Column="0"
+                Icon="/ApplicationManager;component/Images/launcher.ico"
+                Text="Android软件包管理（Android Package Management）">
+                <hc:NotifyIcon.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Command="hc:ControlCommands.PushMainWindow2Top" Header="打开主界面" />
+                        <MenuItem Command="hc:ControlCommands.ShutdownApp" Header="退出程序" />
+                    </ContextMenu>
+                </hc:NotifyIcon.ContextMenu>
+                <hc:Interaction.Triggers>
+                    <hc:EventTrigger EventName="Click">
+                        <hc:EventToCommand Command="hc:ControlCommands.PushMainWindow2Top" />
+                    </hc:EventTrigger>
+                </hc:Interaction.Triggers>
+            </hc:NotifyIcon>
+
+            <!--  设备已就绪，点击“安装”即可自动安装  -->
+            <TextBlock
+                Grid.Column="1"
+                Margin="10"
+                FontSize="14"
+                Text="{Binding DeviceState}" />
+        </Grid>
     </Grid>
 </Window>
