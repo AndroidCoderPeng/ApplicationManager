@@ -1,8 +1,4 @@
 ﻿using System.ComponentModel;
-using System.Windows.Interop;
-using System.Windows;
-using System;
-using System.IO.Ports;
 
 namespace ApplicationManager
 {
