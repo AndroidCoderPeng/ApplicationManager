@@ -490,7 +490,8 @@
                             Grid.Column="1"
                             VerticalAlignment="Center"
                             FontSize="14"
-                            Text="{Binding ApplicationName}" />
+                            Text="{Binding ApplicationName}"
+                            ToolTip="{Binding ApplicationName}" />
                     </Grid>
 
                     <Grid Grid.Row="2" Margin="10">

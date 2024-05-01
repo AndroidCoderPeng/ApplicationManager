@@ -49,11 +49,7 @@ namespace ApplicationManager.Utils
         {
             if (directory.Exists)
             {
-                foreach (var directoryInfo in directory.GetDirectories())
-                {
-                    directoryInfo.DeleteDirectoryFiles();
-                }
-
+                //删除文件
                 foreach (var file in directory.GetFiles())
                 {
                     var index = File.GetAttributes(file.FullName).ToString()
@@ -65,7 +61,14 @@ namespace ApplicationManager.Utils
 
                     file.Delete();
                 }
+                
+                //如果是文件夹，则遍历
+                foreach (var directoryInfo in directory.GetDirectories())
+                {
+                    directoryInfo.DeleteDirectoryFiles();
+                }
 
+                //最后删除最外层文件夹
                 directory.Delete();
             }
         }
