@@ -19,6 +19,11 @@ namespace ApplicationManager.Utils
 
         public delegate void CommandValueDelegate(string value);
 
+        /// <summary>
+        /// 指令单参数adb命令
+        /// </summary>
+        /// <param name="arguments"></param>
+        /// <param name="valueDelegate"></param>
         public void ExecuteCommand(string arguments, CommandValueDelegate valueDelegate)
         {
             using (var process = new Process())
@@ -29,11 +34,11 @@ namespace ApplicationManager.Utils
                 process.StartInfo.CreateNoWindow = true;
                 process.StartInfo.RedirectStandardOutput = true;
                 process.StartInfo.RedirectStandardError = true;
-            
+
                 process.Start();
-            
+
                 valueDelegate(process.StandardOutput.ReadToEnd().Trim());
-            
+
                 process.WaitForExit();
                 process.Close();
             }

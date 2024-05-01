@@ -6,9 +6,9 @@
 ###【按钮】选择文件
 ###【文本】软件名称
 ###【文本】软件包名
-###【文本】软件版本 adb shell pm dump com.casic.br.app | findstr version
+###【文本】软件版本
 ###【文本】软件大小
-【列表】软件权限 adb shell dumpsys package com.casic.br.app | adb shell grep permission >> C:\Users\Administrator\Desktop\NewFile.txt
+###【列表】软件权限
 ---------------------------------------------------------------------
 
 【按钮】adb install -r 覆盖安装应用（apk）

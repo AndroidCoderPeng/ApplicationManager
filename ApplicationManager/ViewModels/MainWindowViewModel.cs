@@ -277,6 +277,18 @@ namespace ApplicationManager.ViewModels
             }
         }
 
+        private ObservableCollection<string> _permissionItems;
+
+        public ObservableCollection<string> PermissionItems
+        {
+            get => _permissionItems;
+            set
+            {
+                _permissionItems = value;
+                RaisePropertyChanged();
+            }
+        }
+
         private bool _isTaskBusy;
 
         public bool IsTaskBusy
@@ -415,7 +427,7 @@ namespace ApplicationManager.ViewModels
                     return;
                 }
 
-                //解压缩获取apk文件基本信息
+                //解压缩获取apk文件基本信息。不能用adb获取APK信息，因为选择的APK不一定是安装了的
                 GetApplicationInfo(_filePath);
             });
 
@@ -700,10 +712,16 @@ namespace ApplicationManager.ViewModels
             });
 
             var info = await task;
+            PermissionItems = new ObservableCollection<string>();
             if (info != null)
             {
                 PackageName = info.packageName;
                 ApplicationVersion = info.versionName;
+
+                foreach (var permission in info.Permissions)
+                {
+                    PermissionItems.Add(permission);
+                }
             }
             else
             {
@@ -714,18 +732,6 @@ namespace ApplicationManager.ViewModels
             //删除生成的Temp文件夹下面的文件
             directory.DeleteDirectoryFiles();
             IsTaskBusy = false;
-
-            // var creator = new CommandCreator();
-            // //adb shell dumpsys package com.casic.br.app | adb shell grep  permission
-            // var permissionCommand = creator.Init()
-            //     .Append("shell").Append("dumpsys").Append("package").Append(_packageName)
-            //     // .Append("|")
-            //     // .Append("adb").Append("shell").Append("grep").Append("permission")
-            //     .Build();
-            // CommandManager.Get.ExecuteCommand(permissionCommand, delegate(string value)
-            // {
-            //     Console.WriteLine(value);
-            // });
         }
     }
 }
