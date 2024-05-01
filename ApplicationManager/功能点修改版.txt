@@ -1,37 +1,36 @@
-【按钮】adb devices 获取设备列表和设备的状态
-【点击列表自动连接】adb connect 192.168.3.11:44887 远程连接设备【开发者选项-USB调试打开、Android 11以上无线调试可以获取无线调试的IP地址】
+###【按钮】adb devices 获取设备列表和设备的状态
+###【点击列表自动连接】adb connect 192.168.3.11:44887 远程连接设备【开发者选项-USB调试打开、Android 11以上无线调试可以获取无线调试的IP地址】
 
 ---------------------------------------------------------------------
 【文件拖动获取路径】
-【按钮】选择文件
-【文本】软件名称
-【文本】软件包名
-【文本】软件版本
-【文本】软件大小
+###【按钮】选择文件
+###【文本】软件名称
+###【文本】软件包名
+###【文本】软件版本
+###【文本】软件大小
 【列表】软件权限
 ---------------------------------------------------------------------
 
 【按钮】adb install -r 覆盖安装应用（apk）
-【按钮】adb uninstall 卸载应用（应用包名）
+###【按钮】adb uninstall 卸载应用（应用包名）
 【按钮】adb pull 将设备上的文件复制到电脑上
 【按钮】adb push 将电脑上的文件复制到设备上
 
-【选择设备并连接成功后，自动获取】adb shell pm list package -3 列出第三方的应用
+###【选择设备并连接成功后，自动获取】adb shell pm list package -3 列出第三方的应用
 
-【按钮】adb shell screencap -p /sdcard/screen.png 截取屏幕截图并保存到指定位置
+###【按钮】adb shell screencap -p /sdcard/screen.png 截取屏幕截图并保存到指定位置
 
-【选择设备并连接成功后，自动获取】adb shell settings get secure android_id 查看android id
-【选择设备并连接成功后，自动获取】adb shell getprop ro.product.model 获取设备型号
-【选择设备并连接成功后，自动获取】adb shell getprop ro.product.brand 获取设备品牌
-【选择设备并连接成功后，自动获取】adb shell getprop ro.product.name 获取设备名称
-【选择设备并连接成功后，自动获取】adb shell getprop ro.product.board 获取处理器型号
-【选择设备并连接成功后，自动获取】adb shell getprop ro.product.cpu.abilist 获取CPU支持的abi架构列表
-【选择设备并连接成功后，自动获取】adb shell getprop ro.build.version.release 获取设备Android系统版本
-【选择设备并连接成功后，自动获取】adb shell wm size 获取设备屏幕分辨率
-【选择设备并连接成功后，自动获取】adb shell wm density 获取设备屏幕密度
-
-【选择设备并连接成功后，自动获取】adb shell cat /proc/meminfo 获取手机内存信息
-【选择设备并连接成功后，自动获取】adb shell dumpsys battery 监控电池信息
+###【选择设备并连接成功后，自动获取】adb shell settings get secure android_id 查看android id
+###【选择设备并连接成功后，自动获取】adb shell getprop ro.product.model 获取设备型号
+###【选择设备并连接成功后，自动获取】adb shell getprop ro.product.brand 获取设备品牌
+###【选择设备并连接成功后，自动获取】adb shell getprop ro.product.name 获取设备名称
+###【选择设备并连接成功后，自动获取】adb shell getprop ro.product.board 获取处理器型号
+###【选择设备并连接成功后，自动获取】adb shell getprop ro.product.cpu.abilist 获取CPU支持的abi架构列表
+###【选择设备并连接成功后，自动获取】adb shell getprop ro.build.version.release 获取设备Android系统版本
+###【选择设备并连接成功后，自动获取】adb shell wm size 获取设备屏幕分辨率
+###【选择设备并连接成功后，自动获取】adb shell wm density 获取设备屏幕密度
+###【选择设备并连接成功后，自动获取】adb shell cat /proc/meminfo 获取手机内存信息
+###【选择设备并连接成功后，自动获取】adb shell dumpsys battery 监控电池信息
 
 【按钮】adb reboot 重启设备
-【按钮】adb disconnect 断开所有设备连接 
+【按钮】adb disconnect <设备的IP地址>:端口号 adb断开某设备

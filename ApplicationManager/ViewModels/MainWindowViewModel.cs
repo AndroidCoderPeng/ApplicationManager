@@ -1,13 +1,19 @@
 ﻿using System;
 using System.Collections.ObjectModel;
-using System.Linq;
+using System.ComponentModel;
+using System.IO;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Timers;
+using ApkNet.ApkReader;
 using ApplicationManager.Utils;
 using HandyControl.Controls;
+using ICSharpCode.SharpZipLib.Zip;
+using Microsoft.Win32;
 using Prism.Commands;
 using Prism.Mvvm;
+using Enumerable = System.Linq.Enumerable;
+using ZipFile = System.IO.Compression.ZipFile;
 
 namespace ApplicationManager.ViewModels
 {
@@ -290,8 +296,10 @@ namespace ApplicationManager.ViewModels
 
         #endregion
 
+        private readonly BackgroundWorker _backgroundWorker;
         private string _selectedDeviceAddress = string.Empty;
         private string _selectedPackage = string.Empty;
+        private string _apkPath = string.Empty;
 
         /// <summary>
         /// DispatcherTimer与窗体为同一个线程，故如果频繁的执行DispatcherTimer的话，会造成主线程的卡顿。
@@ -302,6 +310,13 @@ namespace ApplicationManager.ViewModels
 
         public MainWindowViewModel()
         {
+            _backgroundWorker = new BackgroundWorker();
+            _backgroundWorker.WorkerReportsProgress = true;
+            _backgroundWorker.WorkerSupportsCancellation = true;
+            _backgroundWorker.DoWork += Worker_OnDoWork;
+            _backgroundWorker.ProgressChanged += Worker_OnProgressChanged;
+            _backgroundWorker.RunWorkerCompleted += Worker_OnRunWorkerCompleted;
+
             //异步尝试获取设备列表，可能会为空，因为开发者模式可能没开
             Task.Run(delegate { DeviceItems = GetDevices(); });
 
@@ -342,6 +357,45 @@ namespace ApplicationManager.ViewModels
 
             PackageSelectedCommand = new DelegateCommand<string>(package => { _selectedPackage = package; });
 
+            RebootDeviceCommand = new DelegateCommand(delegate { });
+
+            DisconnectDeviceCommand = new DelegateCommand(delegate { });
+
+            OutputImageCommand = new DelegateCommand(delegate { });
+
+            ImportImageCommand = new DelegateCommand(delegate { });
+
+            ScreenshotCommand = new DelegateCommand(delegate
+            {
+                var creator = new CommandCreator();
+                //adb shell screencap -p /sdcard/screen.png 截取屏幕截图并保存到指定位置
+                var screenCapCommand = creator.Init()
+                    .Append("shell").Append("screencap").Append("-p")
+                    .Append($"/sdcard/{DateTime.Now:yyyyMMddHHmmss}.png").Build();
+                CommandManager.Get.ExecuteCommand(screenCapCommand, delegate { Growl.Success("屏幕抓取成功"); });
+            });
+
+            SelectFileCommand = new DelegateCommand(delegate
+            {
+                var fileDialog = new OpenFileDialog
+                {
+                    // 设置默认格式
+                    DefaultExt = ".apk",
+                    Filter = "安装包文件(*.apk)|*.apk"
+                };
+                var result = fileDialog.ShowDialog();
+                if (result != true) return;
+                _apkPath = fileDialog.FileName;
+                //解压缩获取apk文件基本信息
+                if (_backgroundWorker.IsBusy)
+                {
+                    //TODO 提示用户
+                    return;
+                }
+
+                _backgroundWorker.RunWorkerAsync();
+            });
+
             UninstallCommand = new DelegateCommand(delegate
             {
                 if (string.IsNullOrEmpty(_selectedPackage))
@@ -358,6 +412,18 @@ namespace ApplicationManager.ViewModels
                     Growl.Success(value);
                     ApplicationPackages.Remove(_selectedPackage);
                 });
+            });
+
+            InstallCommand = new DelegateCommand(delegate
+            {
+                var creator = new CommandCreator();
+                //adb install -r 覆盖安装应用（apk）
+                // var installCommand = creator.Init().Append("uninstall").Append("-r").Append().Build();
+                // CommandManager.Get.ExecuteCommand(installCommand, delegate(string value)
+                // {
+                //     ApplicationPackages.Add();
+                //     Growl.Success(value);
+                // });
             });
         }
 
@@ -534,7 +600,7 @@ namespace ApplicationManager.ViewModels
                 CommandManager.Get.ExecuteCommand(packageCommand, delegate(string value)
                 {
                     var strings = value.Split(new[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
-                    var packages = strings.Select(
+                    var packages = Enumerable.Select(strings,
                         temp => temp.Split(new[] { ":" }, StringSplitOptions.None)[1]
                     );
                     foreach (var package in packages)
@@ -545,6 +611,81 @@ namespace ApplicationManager.ViewModels
                 return result;
             });
             ApplicationPackages = await task;
+        }
+
+        private void Worker_OnDoWork(object sender, DoWorkEventArgs e)
+        {
+            var destinationDirectory = $"{FilePathManager.Get.GetDesktopPath()}\\Temp";
+            ZipFile.ExtractToDirectory(_apkPath, destinationDirectory);
+        }
+
+        private void Worker_OnProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+        }
+
+        private void Worker_OnRunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            var file = new FileInfo(_apkPath);
+            ApplicationName = file.Name;
+            //解析APK文件
+            ExtractApkResources();
+            var size = (double)file.Length / 1024 / 1024;
+            FileSize = $"{Math.Round(size, 1)}M";
+        }
+
+        /// <summary>
+        /// 从APK里面提取资源
+        /// </summary>
+        private void ExtractApkResources()
+        {
+            byte[] manifestData = null;
+            byte[] resourcesData = null;
+            using (var zip = new ZipInputStream(File.OpenRead(_apkPath)))
+            {
+                using (var filestream = new FileStream(_apkPath, FileMode.Open, FileAccess.Read))
+                {
+                    var zipFile = new ICSharpCode.SharpZipLib.Zip.ZipFile(filestream);
+                    ZipEntry zipEntry;
+                    while ((zipEntry = zip.GetNextEntry()) != null)
+                    {
+                        switch (zipEntry.Name.ToLower())
+                        {
+                            case "androidmanifest.xml":
+                                manifestData = new byte[50 * 1024];
+                                using (var stream = zipFile.GetInputStream(zipEntry))
+                                {
+                                    stream.Read(manifestData, 0, manifestData.Length);
+                                }
+
+                                break;
+
+                            case "resources.arsc":
+                                using (var stream = zipFile.GetInputStream(zipEntry))
+                                {
+                                    using (var s = new BinaryReader(stream))
+                                    {
+                                        resourcesData = s.ReadBytes((int)zipEntry.Size);
+                                    }
+                                }
+
+                                break;
+                        }
+                    }
+                }
+            }
+
+            var apkReader = new ApkReader();
+            try
+            {
+                var info = apkReader.extractInfo(manifestData, resourcesData);
+                PackageName = info.packageName;
+                ApplicationVersion = info.versionName;
+            }
+            catch (Exception)
+            {
+                PackageName = "解析失败";
+                ApplicationVersion = "解析失败";
+            }
         }
     }
 }
