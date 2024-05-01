@@ -2,6 +2,8 @@
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+using System.Windows.Threading;
 using ApplicationManager.Utils;
 using Prism.Commands;
 using Prism.Mvvm;
@@ -261,134 +263,170 @@ namespace ApplicationManager.ViewModels
 
         #endregion
 
+        private string _selectDeviceAddress = string.Empty;
+        
+        private readonly DispatcherTimer _refreshDeviceTimer = new DispatcherTimer
+        {
+            Interval = new TimeSpan(0, 0, 3)
+        };
+
         public MainWindowViewModel()
         {
-            RefreshDeviceCommand = new DelegateCommand(delegate
+            //异步尝试获取设备列表，可能会为空，因为开发者模式可能没开
+            Task.Run(delegate { DeviceItems = GetDevices(); });
+            
+            _refreshDeviceTimer.Tick += delegate
             {
-                DeviceItems = new ObservableCollection<string>();
-                var creator = new CommandCreator();
-                var command = creator.Append("devices").Build();
-                CommandManager.Get.ExecuteCommand(command, delegate(string value)
+                if (string.IsNullOrEmpty(_selectDeviceAddress))
                 {
-                    if (value.Equals("List of devices attached"))
-                    {
-                        //TODO
-                        Console.WriteLine(@"无设备");
-                        return;
-                    }
+                    return;
+                }
+                
+                GetDeviceDetail();
+            };
+            _refreshDeviceTimer.Start();
 
-                    // 259dc884        device
-                    // 192.168.3.11:40773      device
-                    //解析返回值，序列化成 ObservableCollection
-                    var strings = value.Split(new[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
-                    for (var i = 1; i < strings.Length; i++)
-                    {
-                        var newLine = Regex.Replace(strings[i], @"\s", "*");
-                        var split = newLine.Split(new[] { "*" }, StringSplitOptions.RemoveEmptyEntries);
-                        DeviceItems.Add(split[0]);
-                    }
-                });
-            });
+            RefreshDeviceCommand = new DelegateCommand(delegate { DeviceItems = GetDevices(); });
 
             DeviceSelectedCommand = new DelegateCommand<string>(address =>
             {
-                //TODO 需要加线程处理
-                var creator = new CommandCreator();
-                //adb shell settings get secure android_id 查看android id
-                var androidIdCommand = creator.Init().Append("shell").Append("settings").Append("get").Append("secure").Append("android_id").Build();
-                CommandManager.Get.ExecuteCommand(androidIdCommand, delegate(string value) { AndroidId = value; });
+                _selectDeviceAddress = address;
+                //异步线程处理
+                Task.Run(GetDeviceDetail);
+            });
+        }
 
-                //adb shell getprop ro.product.model 获取设备型号
-                var modelCommand = creator.Init().Append("shell").Append("getprop").Append("ro.product.model").Build();
-                CommandManager.Get.ExecuteCommand(modelCommand, delegate(string value) { DeviceModel = value; });
-
-                //adb shell getprop ro.product.brand 获取设备品牌
-                var brandCommand = creator.Init().Append("shell").Append("getprop").Append("ro.product.brand").Build();
-                CommandManager.Get.ExecuteCommand(brandCommand, delegate(string value) { DeviceBrand = value; });
-
-                //adb shell getprop ro.product.name 获取设备名称
-                var nameCommand = creator.Init().Append("shell").Append("getprop").Append("ro.product.name").Build();
-                CommandManager.Get.ExecuteCommand(nameCommand, delegate(string value) { DeviceName = value; });
-
-                //adb shell getprop ro.product.board 获取处理器型号
-                var boardCommand = creator.Init().Append("shell").Append("getprop").Append("ro.product.board").Build();
-                CommandManager.Get.ExecuteCommand(boardCommand, delegate(string value) { DeviceCpu = value; });
-
-                //adb shell getprop ro.product.cpu.abilist 获取CPU支持的abi架构列表
-                var abiCommand = creator.Init().Append("shell").Append("getprop").Append("ro.product.cpu.abilist").Build();
-                CommandManager.Get.ExecuteCommand(abiCommand, delegate(string value) { DeviceAbi = value; });
-
-                //adb shell getprop ro.build.version.release 获取设备Android系统版本
-                var versionCommand = creator.Init().Append("shell").Append("getprop").Append("ro.build.version.release").Build();
-                CommandManager.Get.ExecuteCommand(versionCommand, delegate(string value) { AndroidVersion = value; });
-
-                //adb shell wm size 获取设备屏幕分辨率
-                var sizeCommand = creator.Init().Append("shell").Append("wm").Append("size").Build();
-                CommandManager.Get.ExecuteCommand(sizeCommand, delegate(string value)
+        /// <summary>
+        /// 获取设备列表
+        /// </summary>
+        /// <returns></returns>
+        private ObservableCollection<string> GetDevices()
+        {
+            var result = new ObservableCollection<string>();
+            var creator = new CommandCreator();
+            var command = creator.Append("devices").Build();
+            CommandManager.Get.ExecuteCommand(command, delegate(string value)
+            {
+                if (value.Equals("List of devices attached"))
                 {
-                    //Physical size: 1240x2772
-                    DeviceSize = value.Split(new[] { ":" }, StringSplitOptions.RemoveEmptyEntries)[1].Trim();
-                });
+                    //TODO
+                    Console.WriteLine(@"无设备");
+                    return;
+                }
 
-                //adb shell wm density 获取设备屏幕密度
-                var densityCommand = creator.Init().Append("shell").Append("wm").Append("density").Build();
-                CommandManager.Get.ExecuteCommand(densityCommand, delegate(string value)
+                // 259dc884        device
+                // 192.168.3.11:40773      device
+                //解析返回值，序列化成 ObservableCollection
+                var strings = value.Split(new[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
+                for (var i = 1; i < strings.Length; i++)
                 {
-                    //Physical density: 560
-                    DeviceDensity = value.Split(new[] { ":" }, StringSplitOptions.RemoveEmptyEntries)[1].Trim();
-                });
+                    var newLine = Regex.Replace(strings[i], @"\s", "*");
+                    var split = newLine.Split(new[] { "*" }, StringSplitOptions.RemoveEmptyEntries);
+                    result.Add(split[0]);
+                }
+            });
+            return result;
+        }
 
-                //adb shell cat /proc/meminfo 获取手机内存信息
-                var meminfoCommand = creator.Init().Append("shell").Append("cat").Append("/proc/meminfo").Build();
-                CommandManager.Get.ExecuteCommand(meminfoCommand, delegate(string value)
+        /// <summary>
+        /// 获取设备详情
+        /// </summary>
+        private void GetDeviceDetail()
+        {
+            var creator = new CommandCreator();
+            //adb shell settings get secure android_id 查看android id
+            var androidIdCommand = creator.Init()
+                .Append("shell").Append("settings").Append("get").Append("secure").Append("android_id").Build();
+            CommandManager.Get.ExecuteCommand(androidIdCommand, delegate(string value) { AndroidId = value; });
+
+            //adb shell getprop ro.product.model 获取设备型号
+            var modelCommand = creator.Init().Append("shell").Append("getprop").Append("ro.product.model").Build();
+            CommandManager.Get.ExecuteCommand(modelCommand, delegate(string value) { DeviceModel = value; });
+
+            //adb shell getprop ro.product.brand 获取设备品牌
+            var brandCommand = creator.Init().Append("shell").Append("getprop").Append("ro.product.brand").Build();
+            CommandManager.Get.ExecuteCommand(brandCommand, delegate(string value) { DeviceBrand = value; });
+
+            //adb shell getprop ro.product.name 获取设备名称
+            var nameCommand = creator.Init().Append("shell").Append("getprop").Append("ro.product.name").Build();
+            CommandManager.Get.ExecuteCommand(nameCommand, delegate(string value) { DeviceName = value; });
+
+            //adb shell getprop ro.product.board 获取处理器型号
+            var boardCommand = creator.Init().Append("shell").Append("getprop").Append("ro.product.board").Build();
+            CommandManager.Get.ExecuteCommand(boardCommand, delegate(string value) { DeviceCpu = value; });
+
+            //adb shell getprop ro.product.cpu.abilist 获取CPU支持的abi架构列表
+            var abiCommand = creator.Init().Append("shell").Append("getprop").Append("ro.product.cpu.abilist").Build();
+            CommandManager.Get.ExecuteCommand(abiCommand, delegate(string value) { DeviceAbi = value; });
+
+            //adb shell getprop ro.build.version.release 获取设备Android系统版本
+            var versionCommand = creator.Init()
+                .Append("shell").Append("getprop").Append("ro.build.version.release").Build();
+            CommandManager.Get.ExecuteCommand(versionCommand, delegate(string value) { AndroidVersion = value; });
+
+            //adb shell wm size 获取设备屏幕分辨率
+            var sizeCommand = creator.Init().Append("shell").Append("wm").Append("size").Build();
+            CommandManager.Get.ExecuteCommand(sizeCommand, delegate(string value)
+            {
+                //Physical size: 1240x2772
+                DeviceSize = value.Split(new[] { ":" }, StringSplitOptions.RemoveEmptyEntries)[1].Trim();
+            });
+
+            //adb shell wm density 获取设备屏幕密度
+            var densityCommand = creator.Init().Append("shell").Append("wm").Append("density").Build();
+            CommandManager.Get.ExecuteCommand(densityCommand, delegate(string value)
+            {
+                //Physical density: 560
+                DeviceDensity = value.Split(new[] { ":" }, StringSplitOptions.RemoveEmptyEntries)[1].Trim();
+            });
+
+            //adb shell cat /proc/meminfo 获取手机内存信息
+            var meminfoCommand = creator.Init().Append("shell").Append("cat").Append("/proc/meminfo").Build();
+            CommandManager.Get.ExecuteCommand(meminfoCommand, delegate(string value) { });
+
+            //adb shell dumpsys battery 监控电池信息
+            var batteryCommand = creator.Init().Append("shell").Append("dumpsys").Append("battery").Build();
+            CommandManager.Get.ExecuteCommand(batteryCommand, delegate(string value)
+            {
+                var strings = value.Split(new[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
+                var dictionary = strings.Select(
+                    temp => temp.Split(new[] { ":" }, StringSplitOptions.None)
+                ).ToDictionary(
+                    split => split[0].Trim(), split => split[1].Trim()
+                );
+
+                foreach (var kvp in dictionary)
                 {
-                    
-                });
-
-                //adb shell dumpsys battery 监控电池信息
-                var batteryCommand = creator.Init().Append("shell").Append("dumpsys").Append("battery").Build();
-                CommandManager.Get.ExecuteCommand(batteryCommand, delegate(string value)
-                {
-                    var strings = value.Split(new[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
-                    var dictionary = strings.Select(
-                        temp => temp.Split(new[] { ":" }, StringSplitOptions.None)
-                    ).ToDictionary(
-                        split => split[0].Trim(), split => split[1].Trim()
-                    );
-
-                    foreach (var kvp in dictionary)
+                    switch (kvp.Key)
                     {
-                        switch (kvp.Key)
-                        {
-                            case "status":
-                                // 2:正充电；3：没插充电器；4：不充电； 5：电池充满
-                                switch (kvp.Value)
-                                {
-                                    case "2":
-                                        BatteryState = "正在充电";
-                                        break;
+                        case "status":
+                            // 2:正充电；3：没插充电器；4：不充电； 5：电池充满
+                            switch (kvp.Value)
+                            {
+                                case "2":
+                                    BatteryState = "正在充电";
+                                    break;
 
-                                    case "5":
-                                        BatteryState = "充电完成";
-                                        break;
+                                case "5":
+                                    BatteryState = "充电完成";
+                                    break;
 
-                                    default:
-                                        BatteryState = "未充电";
-                                        break;
-                                }
+                                default:
+                                    BatteryState = "未充电";
+                                    break;
+                            }
 
-                                break;
-                            case "level":
-                                Battery = kvp.Value;
-                                break;
-                            
-                            case "temperature":
-                                var temperature = int.Parse(kvp.Value) * 0.1;
-                                BatteryTemperature = $"{temperature}℃";
-                                break;
-                        }
+                            break;
+                        case "level":
+                            Battery = kvp.Value;
+                            break;
+
+                        case "temperature":
+                            var temperature = int.Parse(kvp.Value) * 0.1;
+                            BatteryTemperature = $"{temperature}℃";
+                            break;
                     }
-                });
+                }
             });
         }
     }
