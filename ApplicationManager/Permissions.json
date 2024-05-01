@@ -1,0 +1,482 @@
+[
+  {
+    "Permission": "android.permission.ACCESS_CHECKIN_PROPERTIES",
+    "Description": "读取或写入登记check-in数据库属性表的权限"
+  },
+  {
+    "Permission": "android.permission.ACCESS_COARSE_LOCATION",
+    "Description": "通过WiFi或移动基站的方式获取用户错略的经纬度信息，定位精度大概误差在30~1500米"
+  },
+  {
+    "Permission": "android.permission.ACCESS_FINE_LOCATION",
+    "Description": "通过GPS芯片接收卫星的定位信息，定位精度达10米以内"
+  },
+  {
+    "Permission": "android.permission.ACCESS_LOCATION_EXTRA_COMMANDS",
+    "Description": "允许程序访问额外的定位提供者指令"
+  },
+  {
+    "Permission": "android.permission.ACCESS_MOCK_LOCATION",
+    "Description": "获取模拟定位信息，一般用于帮助开发者调试应用"
+  },
+  {
+    "Permission": "android.permission.ACCESS_NETWORK_STATE",
+    "Description": "获取网络信息状态，如当前的网络连接是否有效"
+  },
+  {
+    "Permission": "android.permission.ACCESS_SURFACE_FLINGER",
+    "Description": "Android平台上底层的图形显示支持，一般用于游戏或照相机预览界面和底层模式的屏幕截图"
+  },
+  {
+    "Permission": "android.permission.ACCESS_WIFI_STATE",
+    "Description": "获取当前WiFi接入的状态以及WLAN热点的信息"
+  },
+  {
+    "Permission": "android.permission.ACCOUNT_MANAGER",
+    "Description": "获取账户验证信息，主要为GMail账户信息，只有系统级进程才能访问的权限"
+  },
+  {
+    "Permission": "android.permission.AUTHENTICATE_ACCOUNTS",
+    "Description": "允许一个程序通过账户验证方式访问账户管理ACCOUNT_MANAGER相关信息"
+  },
+  {
+    "Permission": "android.permission.BATTERY_STATS",
+    "Description": "获取电池电量统计信息"
+  },
+  {
+    "Permission": "android.permission.BIND_APPWIDGET",
+    "Description": "允许一个程序告诉appWidget服务需要访问小插件的数据库，只有非常少的应用才用到此权限"
+  },
+  {
+    "Permission": "android.permission.BIND_DEVICE_ADMIN",
+    "Description": "请求系统管理员接收者receiver，只有系统才能使用"
+  },
+  {
+    "Permission": "android.permission.BIND_INPUT_METHOD",
+    "Description": "请求InputMethodService服务，只有系统才能使用"
+  },
+  {
+    "Permission": "android.permission.BIND_REMOTEVIEWS",
+    "Description": "必须通过RemoteViewsService服务来请求，只有系统才能用"
+  },
+  {
+    "Permission": "android.permission.BIND_WALLPAPER",
+    "Description": "必须通过WallpaperService服务来请求，只有系统才能用"
+  },
+  {
+    "Permission": "android.permission.BLUETOOTH",
+    "Description": "允许程序连接配对过的蓝牙设备"
+  },
+  {
+    "Permission": "android.permission.BLUETOOTH_ADMIN",
+    "Description": "允许程序进行发现和配对新的蓝牙设备"
+  },
+  {
+    "Permission": "android.permission.BRICK",
+    "Description": "能够禁用手机，非常危险，顾名思义就是让手机变成砖头"
+  },
+  {
+    "Permission": "android.permission.BROADCAST_PACKAGE_REMOVED",
+    "Description": "当一个应用在删除时触发一个广播"
+  },
+  {
+    "Permission": "android.permission.BROADCAST_SMS",
+    "Description": "当收到短信时触发一个广播"
+  },
+  {
+    "Permission": "android.permission.BROADCAST_STICKY",
+    "Description": "允许一个程序收到广播后快速收到下一个广播"
+  },
+  {
+    "Permission": "android.permission.BROADCAST_WAP_PUSH",
+    "Description": "WAP PUSH服务收到后触发一个广播"
+  },
+  {
+    "Permission": "android.permission.CALL_PHONE",
+    "Description": "允许程序从非系统拨号器里输入电话号码"
+  },
+  {
+    "Permission": "android.permission.CALL_PRIVILEGED",
+    "Description": "允许程序拨打电话，替换系统的拨号器界面"
+  },
+  {
+    "Permission": "android.permission.CAMERA",
+    "Description": "允许访问摄像头进行拍照"
+  },
+  {
+    "Permission": "android.permission.CHANGE_COMPONENT_ENABLED_STATE",
+    "Description": "改变组件是否启用状态"
+  },
+  {
+    "Permission": "android.permission.CHANGE_CONFIGURATION",
+    "Description": "允许当前应用改变配置，如定位"
+  },
+  {
+    "Permission": "android.permission.CHANGE_NETWORK_STATE",
+    "Description": "改变网络状态如是否能联网"
+  },
+  {
+    "Permission": "android.permission.CHANGE_WIFI_MULTICAST_STATE",
+    "Description": "改变WiFi多播状态"
+  },
+  {
+    "Permission": "android.permission.CHANGE_WIFI_STATE",
+    "Description": "改变WiFi状态"
+  },
+  {
+    "Permission": "android.permission.CLEAR_APP_CACHE",
+    "Description": "清除应用缓存"
+  },
+  {
+    "Permission": "android.permission.CLEAR_APP_USER_DATA",
+    "Description": "清除应用的用户数据"
+  },
+  {
+    "Permission": "android.permission.CWJ_GROUP",
+    "Description": "允许CWJ账户组访问底层信息"
+  },
+  {
+    "Permission": "android.permission.CELL_PHONE_MASTER_EX",
+    "Description": "手机优化大师扩展权限"
+  },
+  {
+    "Permission": "android.permission.CONTROL_LOCATION_UPDATES",
+    "Description": "允许获得移动网络定位信息改变"
+  },
+  {
+    "Permission": "android.permission.DELETE_CACHE_FILES",
+    "Description": "允许应用删除缓存文件"
+  },
+  {
+    "Permission": "android.permission.DELETE_PACKAGES",
+    "Description": "允许程序删除应用"
+  },
+  {
+    "Permission": "android.permission.DEVICE_POWER",
+    "Description": "允许访问底层电源管理"
+  },
+  {
+    "Permission": "android.permission.DIAGNOSTIC",
+    "Description": "允许程序到RW到诊断资源"
+  },
+  {
+    "Permission": "android.permission.DISABLE_KEYGUARD",
+    "Description": "允许程序禁用键盘锁"
+  },
+  {
+    "Permission": "android.permission.DUMP",
+    "Description": "允许程序获取系统dump信息从系统服务"
+  },
+  {
+    "Permission": "android.permission.EXPAND_STATUS_BAR",
+    "Description": "允许程序扩展或收缩状态栏"
+  },
+  {
+    "Permission": "android.permission.FACTORY_TEST",
+    "Description": "允许程序运行工厂测试模式"
+  },
+  {
+    "Permission": "android.permission.FLASHLIGHT",
+    "Description": "允许访问闪光灯"
+  },
+  {
+    "Permission": "android.permission.FORCE_BACK",
+    "Description": "允许程序强制使用back后退按键，无论Activity是否在顶层"
+  },
+  {
+    "Permission": "android.permission.GET_ACCOUNTS",
+    "Description": "访问GMail账户列表"
+  },
+  {
+    "Permission": "android.permission.GET_PACKAGE_SIZE",
+    "Description": "获取应用的文件大小"
+  },
+  {
+    "Permission": "android.permission.GET_TASKS",
+    "Description": "允许程序获取当前或最近运行的应用"
+  },
+  {
+    "Permission": "android.permission.GLOBAL_SEARCH",
+    "Description": "允许程序使用全局搜索功能"
+  },
+  {
+    "Permission": "android.permission.HARDWARE_TEST",
+    "Description": "访问硬件辅助设备，用于硬件测试"
+  },
+  {
+    "Permission": "android.permission.INJECT_EVENTS",
+    "Description": "允许访问本程序的底层事件，获取按键、轨迹球的事件流"
+  },
+  {
+    "Permission": "android.permission.INSTALL_LOCATION_PROVIDER",
+    "Description": "安装定位提供"
+  },
+  {
+    "Permission": "android.permission.INSTALL_PACKAGES",
+    "Description": "允许程序安装应用"
+  },
+  {
+    "Permission": "android.permission.INTERNAL_SYSTEM_WINDOW",
+    "Description": "允许程序打开内部窗口，不对第三方应用程序开放此权限"
+  },
+  {
+    "Permission": "android.permission.INTERNET",
+    "Description": "访问网络连接，可能产生GPRS流量"
+  },
+  {
+    "Permission": "android.permission.KILL_BACKGROUND_PROCESSES",
+    "Description": "允许程序调用killBackgroundProcesses(String).方法结束后台进程"
+  },
+  {
+    "Permission": "android.permission.MANAGE_ACCOUNTS",
+    "Description": "允许程序管理AccountManager中的账户列表"
+  },
+  {
+    "Permission": "android.permission.MANAGE_APP_TOKENS",
+    "Description": "管理创建、摧毁、Z轴顺序，仅用于系统"
+  },
+  {
+    "Permission": "android.permission.MTWEAK_USER",
+    "Description": "允许mTweak用户访问高级系统权限"
+  },
+  {
+    "Permission": "android.permission.MTWEAK_FORUM",
+    "Description": "允许使用mTweak社区权限"
+  },
+  {
+    "Permission": "android.permission.MASTER_CLEAR",
+    "Description": "允许程序执行软格式化，删除系统配置信息"
+  },
+  {
+    "Permission": "android.permission.MODIFY_AUDIO_SETTINGS",
+    "Description": "修改声音设置信息"
+  },
+  {
+    "Permission": "android.permission.MODIFY_PHONE_STATE",
+    "Description": "修改电话状态，如飞行模式，但不包含替换系统拨号器界面"
+  },
+  {
+    "Permission": "android.permission.MOUNT_FORMAT_FILESYSTEMS",
+    "Description": "格式化可移动文件系统，比如格式化清空SD卡"
+  },
+  {
+    "Permission": "android.permission.MOUNT_UNMOUNT_FILESYSTEMS",
+    "Description": "挂载、反挂载外部文件系统"
+  },
+  {
+    "Permission": "android.permission.NFC",
+    "Description": "允许程序执行NFC近距离通讯操作，用于移动支持"
+  },
+  {
+    "Permission": "android.permission.PERSISTENT_ACTIVITY",
+    "Description": "创建一个永久的Activity，该功能标记为将来将被移除"
+  },
+  {
+    "Permission": "android.permission.PROCESS_OUTGOING_CALLS",
+    "Description": "允许程序监视，修改或放弃播出电话"
+  },
+  {
+    "Permission": "android.permission.READ_CALENDAR",
+    "Description": "允许程序读取用户的日程信息"
+  },
+  {
+    "Permission": "android.permission.READ_CONTACTS",
+    "Description": "允许应用访问联系人通讯录信息"
+  },
+  {
+    "Permission": "android.permission.READ_FRAME_BUFFER",
+    "Description": "读取帧缓存用于屏幕截图"
+  },
+  {
+    "Permission": "com.android.browser.permission.READ_HISTORY_BOOKMARKS",
+    "Description": "读取浏览器收藏夹和历史记录"
+  },
+  {
+    "Permission": "android.permission.READ_INPUT_STATE",
+    "Description": "读取当前键的输入状态，仅用于系统"
+  },
+  {
+    "Permission": "android.permission.READ_LOGS",
+    "Description": "读取系统底层日志"
+  },
+  {
+    "Permission": "android.permission.READ_PHONE_STATE",
+    "Description": "访问电话状态"
+  },
+  {
+    "Permission": "android.permission.READ_SMS",
+    "Description": "读取短信内容"
+  },
+  {
+    "Permission": "android.permission.READ_SYNC_SETTINGS",
+    "Description": "读取同步设置，读取Google在线同步设置"
+  },
+  {
+    "Permission": "android.permission.READ_SYNC_STATS",
+    "Description": "读取同步状态，获得Google在线同步状态"
+  },
+  {
+    "Permission": "android.permission.REBOOT",
+    "Description": "允许程序重新启动设备"
+  },
+  {
+    "Permission": "android.permission.RECEIVE_BOOT_COMPLETED",
+    "Description": "允许程序开机自动运行"
+  },
+  {
+    "Permission": "android.permission.RECEIVE_MMS",
+    "Description": "接收彩信"
+  },
+  {
+    "Permission": "android.permission.RECEIVE_SMS",
+    "Description": "接收短信"
+  },
+  {
+    "Permission": "android.permission.RECEIVE_WAP_PUSH",
+    "Description": "接收WAP PUSH信息"
+  },
+  {
+    "Permission": "android.permission.RECORD_AUDIO",
+    "Description": "录制声音通过手机或耳机的麦克"
+  },
+  {
+    "Permission": "android.permission.REORDER_TASKS",
+    "Description": "重新排序系统Z轴运行中的任务"
+  },
+  {
+    "Permission": "android.permission.RESTART_PACKAGES",
+    "Description": "结束任务通过restartPackage(String)方法，该方式将在外来放弃"
+  },
+  {
+    "Permission": "android.permission.SEND_SMS",
+    "Description": "发送短信"
+  },
+  {
+    "Permission": "android.permission.SET_ACTIVITY_WATCHER",
+    "Description": "设置Activity观察器一般用于monkey测试"
+  },
+  {
+    "Permission": "com.android.alarm.permission.SET_ALARM",
+    "Description": "设置闹铃提醒"
+  },
+  {
+    "Permission": "android.permission.SET_ALWAYS_FINISH",
+    "Description": "设置程序在后台是否总是退出"
+  },
+  {
+    "Permission": "android.permission.SET_ANIMATION_SCALE",
+    "Description": "设置全局动画缩放"
+  },
+  {
+    "Permission": "android.permission.SET_DEBUG_APP",
+    "Description": "设置调试程序，一般用于开发"
+  },
+  {
+    "Permission": "android.permission.SET_ORIENTATION",
+    "Description": "设置屏幕方向为横屏或标准方式显示，不用于普通应用"
+  },
+  {
+    "Permission": "android.permission.SET_PREFERRED_APPLICATIONS",
+    "Description": "设置应用的参数，已不再工作具体查看addPackageToPreferred(String)介绍"
+  },
+  {
+    "Permission": "android.permission.SET_PROCESS_LIMIT",
+    "Description": "允许程序设置最大的进程数量的限制"
+  },
+  {
+    "Permission": "android.permission.SET_TIME",
+    "Description": "设置系统时间"
+  },
+  {
+    "Permission": "android.permission.SET_TIME_ZONE",
+    "Description": "设置系统时区"
+  },
+  {
+    "Permission": "android.permission.SET_WALLPAPER",
+    "Description": "设置桌面壁纸"
+  },
+  {
+    "Permission": "android.permission.SET_WALLPAPER_HINTS",
+    "Description": "设置壁纸建议"
+  },
+  {
+    "Permission": "android.permission.SIGNAL_PERSISTENT_PROCESSES",
+    "Description": "发送一个永久的进程信号"
+  },
+  {
+    "Permission": "android.permission.STATUS_BAR",
+    "Description": "允许程序打开、关闭、禁用状态栏"
+  },
+  {
+    "Permission": "android.permission.SUBSCRIBED_FEEDS_READ",
+    "Description": "访问订阅信息的数据库"
+  },
+  {
+    "Permission": "android.permission.SUBSCRIBED_FEEDS_WRITE",
+    "Description": "写入或修改订阅内容的数据库"
+  },
+  {
+    "Permission": "android.permission.SYSTEM_ALERT_WINDOW",
+    "Description": "显示系统窗口"
+  },
+  {
+    "Permission": "android.permission.UPDATE_DEVICE_STATS",
+    "Description": "更新设备状态"
+  },
+  {
+    "Permission": "android.permission.USE_CREDENTIALS",
+    "Description": "允许程序请求验证从AccountManager"
+  },
+  {
+    "Permission": "android.permission.USE_SIP",
+    "Description": "允许程序使用SIP视频服务"
+  },
+  {
+    "Permission": "android.permission.VIBRATE",
+    "Description": "允许振动"
+  },
+  {
+    "Permission": "android.permission.WAKE_LOCK",
+    "Description": "允许程序在手机屏幕关闭后后台进程仍然运行"
+  },
+  {
+    "Permission": "android.permission.WRITE_APN_SETTINGS",
+    "Description": "写入网络GPRS接入点设置"
+  },
+  {
+    "Permission": "android.permission.WRITE_CALENDAR",
+    "Description": "写入日程，但不可读取"
+  },
+  {
+    "Permission": "android.permission.WRITE_CONTACTS",
+    "Description": "写入联系人，但不可读取"
+  },
+  {
+    "Permission": "android.permission.WRITE_EXTERNAL_STORAGE",
+    "Description": "允许程序写入外部存储，如SD卡上写文件"
+  },
+  {
+    "Permission": "android.permission.WRITE_GSERVICES",
+    "Description": "允许程序写入Google Map服务数据"
+  },
+  {
+    "Permission": "com.android.browser.permission.WRITE_HISTORY_BOOKMARKS",
+    "Description": "写入浏览器历史记录或收藏夹，但不可读取"
+  },
+  {
+    "Permission": "android.permission.WRITE_SECURE_SETTINGS",
+    "Description": "允许程序读写系统安全敏感的设置项"
+  },
+  {
+    "Permission": "android.permission.WRITE_SETTINGS",
+    "Description": "允许读写系统设置项"
+  },
+  {
+    "Permission": "android.permission.WRITE_SMS",
+    "Description": "允许编写短信"
+  },
+  {
+    "Permission": "android.permission.WRITE_SYNC_SETTINGS",
+    "Description": "写入Google在线同步设置"
+  }
+]

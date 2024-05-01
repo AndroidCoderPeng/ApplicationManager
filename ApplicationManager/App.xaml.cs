@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using ApplicationManager.DataService;
 using ApplicationManager.Views;
 using Prism.DryIoc;
 using Prism.Ioc;
@@ -17,6 +18,8 @@ namespace ApplicationManager
 
         protected override void RegisterTypes(IContainerRegistry containerRegistry)
         {
+            //Data
+            containerRegistry.RegisterSingleton<IApplicationDataService, ApplicationDataServiceImpl>();
         }
     }
 }

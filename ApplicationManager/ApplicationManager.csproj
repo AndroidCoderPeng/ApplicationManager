@@ -108,7 +108,9 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Converters\ProgressBarVisibilityConverter.cs" />
-    <Compile Include="Models\DeviceModel.cs" />
+    <Compile Include="DataService\ApplicationDataServiceImpl.cs" />
+    <Compile Include="DataService\IApplicationDataService.cs" />
+    <Compile Include="Models\PermissionModel.cs" />
     <Compile Include="Utils\CommandCreator.cs" />
     <Compile Include="Utils\CommandManager.cs" />
     <Compile Include="Utils\FilePathManager.cs" />
@@ -149,6 +151,7 @@
     <Resource Include="Images\launcher.ico" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Permissions.json" />
     <Content Include="功能点修改版.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

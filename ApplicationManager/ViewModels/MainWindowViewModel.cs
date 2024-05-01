@@ -1,11 +1,15 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Timers;
 using ApkNet.ApkReader;
+using ApplicationManager.DataService;
+using ApplicationManager.Models;
 using ApplicationManager.Utils;
 using HandyControl.Controls;
 using ICSharpCode.SharpZipLib.Zip;
@@ -277,9 +281,9 @@ namespace ApplicationManager.ViewModels
             }
         }
 
-        private ObservableCollection<string> _permissionItems;
+        private ObservableCollection<PermissionModel> _permissionItems;
 
-        public ObservableCollection<string> PermissionItems
+        public ObservableCollection<PermissionModel> PermissionItems
         {
             get => _permissionItems;
             set
@@ -332,6 +336,7 @@ namespace ApplicationManager.ViewModels
 
         #endregion
 
+        private List<PermissionModel> _permissions;
         private string _selectedDeviceAddress = string.Empty;
         private string _selectedPackage = string.Empty;
 
@@ -342,8 +347,12 @@ namespace ApplicationManager.ViewModels
         /// </summary>
         private readonly Timer _refreshDeviceTimer = new Timer(3000);
 
-        public MainWindowViewModel()
+        public MainWindowViewModel(IApplicationDataService dataService)
         {
+            //获取Android权限中英文对照列表
+            var filePath = $@"{AppDomain.CurrentDomain.BaseDirectory}\Permissions.json";
+            _permissions = dataService.GetAndroidPermissions(filePath);
+
             //异步尝试获取设备列表，可能会为空，因为开发者模式可能没开
             Task.Run(delegate { DeviceItems = GetDevices(); });
 
@@ -712,7 +721,7 @@ namespace ApplicationManager.ViewModels
             });
 
             var info = await task;
-            PermissionItems = new ObservableCollection<string>();
+            PermissionItems = new ObservableCollection<PermissionModel>();
             if (info != null)
             {
                 PackageName = info.packageName;
@@ -720,13 +729,20 @@ namespace ApplicationManager.ViewModels
 
                 foreach (var permission in info.Permissions)
                 {
-                    PermissionItems.Add(permission);
+                    foreach (var model in _permissions.Where(model => model.Permission.Equals(permission)))
+                    {
+                        PermissionItems.Add(model);
+                    }
                 }
             }
             else
             {
                 PackageName = "解析失败";
                 ApplicationVersion = "解析失败";
+                PermissionItems.Add(new PermissionModel
+                {
+                    Description = "解析失败"
+                });
             }
 
             //删除生成的Temp文件夹下面的文件
