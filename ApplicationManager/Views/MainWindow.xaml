@@ -273,16 +273,15 @@
                                 <TextBlock
                                     VerticalAlignment="Center"
                                     FontSize="14"
-                                    Text="8G/16G" />
+                                    Text="{Binding MemoryRatio}" />
 
                                 <hc:WaveProgressBar
                                     Width="110"
                                     Height="110"
                                     Margin="0,10,0,0"
                                     HorizontalAlignment="Left"
-                                    ShowText="False"
                                     Style="{StaticResource ProgressBarSuccessWave}"
-                                    Value="{Binding Memory}" />
+                                    Value="{Binding MemoryProgress}" />
                             </StackPanel>
                         </Grid>
 
@@ -306,7 +305,7 @@
                                 <ProgressBar
                                     Margin="0,7,0,0"
                                     Style="{StaticResource ProgressBarSuccess}"
-                                    Value="{Binding Battery}" />
+                                    Value="{Binding BatteryProgress}" />
                             </StackPanel>
                         </Grid>
 

@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.ObjectModel;
-using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using System.Windows.Threading;
+using System.Timers;
 using ApplicationManager.Utils;
 using Prism.Commands;
 using Prism.Mvvm;
@@ -138,14 +137,26 @@ namespace ApplicationManager.ViewModels
             }
         }
 
-        private string _memory;
+        private string _memoryRatio;
 
-        public string Memory
+        public string MemoryRatio
         {
-            get => _memory;
+            get => _memoryRatio;
             set
             {
-                _memory = value;
+                _memoryRatio = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        private double _memoryProgress;
+
+        public double MemoryProgress
+        {
+            get => _memoryProgress;
+            set
+            {
+                _memoryProgress = value;
                 RaisePropertyChanged();
             }
         }
@@ -162,14 +173,14 @@ namespace ApplicationManager.ViewModels
             }
         }
 
-        private string _battery;
+        private double _batteryProgress;
 
-        public string Battery
+        public double BatteryProgress
         {
-            get => _battery;
+            get => _batteryProgress;
             set
             {
-                _battery = value;
+                _batteryProgress = value;
                 RaisePropertyChanged();
             }
         }
@@ -264,27 +275,29 @@ namespace ApplicationManager.ViewModels
         #endregion
 
         private string _selectDeviceAddress = string.Empty;
-        
-        private readonly DispatcherTimer _refreshDeviceTimer = new DispatcherTimer
-        {
-            Interval = new TimeSpan(0, 0, 3)
-        };
+
+        /// <summary>
+        /// DispatcherTimer与窗体为同一个线程，故如果频繁的执行DispatcherTimer的话，会造成主线程的卡顿。
+        /// 用System.Timers.Timer来初始化一个异步的时钟，初始化一个时钟的事件，在时钟的事件中采用BeginInvoke来进行异步委托。
+        /// 这样就能防止timer控件的同步事件不停的刷新时，界面的卡顿
+        /// </summary>
+        private readonly Timer _refreshDeviceTimer = new Timer(3000);
 
         public MainWindowViewModel()
         {
             //异步尝试获取设备列表，可能会为空，因为开发者模式可能没开
             Task.Run(delegate { DeviceItems = GetDevices(); });
-            
-            _refreshDeviceTimer.Tick += delegate
+
+            _refreshDeviceTimer.Elapsed += delegate
             {
                 if (string.IsNullOrEmpty(_selectDeviceAddress))
                 {
                     return;
                 }
-                
+
                 GetDeviceDetail();
             };
-            _refreshDeviceTimer.Start();
+            _refreshDeviceTimer.Enabled = true;
 
             RefreshDeviceCommand = new DelegateCommand(delegate { DeviceItems = GetDevices(); });
 
@@ -377,24 +390,47 @@ namespace ApplicationManager.ViewModels
             CommandManager.Get.ExecuteCommand(densityCommand, delegate(string value)
             {
                 //Physical density: 560
-                DeviceDensity = value.Split(new[] { ":" }, StringSplitOptions.RemoveEmptyEntries)[1].Trim();
+                DeviceDensity = $"{value.Split(new[] { ":" }, StringSplitOptions.RemoveEmptyEntries)[1].Trim()}dpi";
             });
 
             //adb shell cat /proc/meminfo 获取手机内存信息
             var meminfoCommand = creator.Init().Append("shell").Append("cat").Append("/proc/meminfo").Build();
-            CommandManager.Get.ExecuteCommand(meminfoCommand, delegate(string value) { });
+            CommandManager.Get.ExecuteCommand(meminfoCommand, delegate(string value)
+            {
+                var dictionary = value.ToDictionary();
+                var available = 0.0;
+                var total = 0.0;
+                foreach (var kvp in dictionary)
+                {
+                    switch (kvp.Key)
+                    {
+                        case "MemAvailable":
+                            available = kvp.Value.FormatMemoryValue();
+                            break;
+
+                        case "MemTotal":
+                            total = kvp.Value.FormatMemoryValue();
+                            break;
+                    }
+                }
+
+                if (total == 0)
+                {
+                    MemoryRatio = "内存获取失败";
+                    MemoryProgress = 0;
+                }
+                else
+                {
+                    MemoryRatio = $"{available}G/{total}G";
+                    MemoryProgress = Math.Round((total - available) / total, 2) * 100;
+                }
+            });
 
             //adb shell dumpsys battery 监控电池信息
             var batteryCommand = creator.Init().Append("shell").Append("dumpsys").Append("battery").Build();
             CommandManager.Get.ExecuteCommand(batteryCommand, delegate(string value)
             {
-                var strings = value.Split(new[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
-                var dictionary = strings.Select(
-                    temp => temp.Split(new[] { ":" }, StringSplitOptions.None)
-                ).ToDictionary(
-                    split => split[0].Trim(), split => split[1].Trim()
-                );
-
+                var dictionary = value.ToDictionary();
                 foreach (var kvp in dictionary)
                 {
                     switch (kvp.Key)
@@ -418,7 +454,7 @@ namespace ApplicationManager.ViewModels
 
                             break;
                         case "level":
-                            Battery = kvp.Value;
+                            BatteryProgress = double.Parse(kvp.Value);
                             break;
 
                         case "temperature":

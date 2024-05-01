@@ -82,6 +82,7 @@
     <Compile Include="Models\DeviceModel.cs" />
     <Compile Include="Utils\CommandCreator.cs" />
     <Compile Include="Utils\CommandManager.cs" />
+    <Compile Include="Utils\MethodExtensions.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
     <Page Include="Views\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
