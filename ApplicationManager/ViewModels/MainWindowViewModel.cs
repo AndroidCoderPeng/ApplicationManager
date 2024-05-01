@@ -460,14 +460,24 @@ namespace ApplicationManager.ViewModels
 
             InstallCommand = new DelegateCommand(delegate
             {
+                if (string.IsNullOrEmpty(_filePath))
+                {
+                    //TODO 提示用户
+                    return;
+                }
+
                 var creator = new CommandCreator();
                 //adb install -r 覆盖安装应用（apk）
-                // var installCommand = creator.Init().Append("uninstall").Append("-r").Append().Build();
-                // CommandManager.Get.ExecuteCommand(installCommand, delegate(string value)
-                // {
-                //     ApplicationPackages.Add();
-                //     Growl.Success(value);
-                // });
+                var installCommand = creator.Init().Append("install").Append("-r").Append(_filePath).Build();
+                CommandManager.Get.ExecuteCommand(installCommand, delegate(string value)
+                {
+                    if (_applicationPackages != null)
+                    {
+                        ApplicationPackages.Add(_packageName);
+                    }
+
+                    Growl.Success(value);
+                });
             });
         }
 
