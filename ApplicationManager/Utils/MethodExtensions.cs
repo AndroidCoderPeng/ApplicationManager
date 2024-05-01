@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 
@@ -38,6 +39,35 @@ namespace ApplicationManager.Utils
 
             //转为GB
             return Math.Round(temp / 1024 / 1024, 2);
+        }
+
+        /// <summary>
+        /// 遍历删除文件夹下面的文件（夹）
+        /// </summary>
+        /// <param name="directory"></param>
+        public static void DeleteDirectoryFiles(this DirectoryInfo directory)
+        {
+            if (directory.Exists)
+            {
+                foreach (var directoryInfo in directory.GetDirectories())
+                {
+                    directoryInfo.DeleteDirectoryFiles();
+                }
+
+                foreach (var file in directory.GetFiles())
+                {
+                    var index = File.GetAttributes(file.FullName).ToString()
+                        .IndexOf("ReadOnly", StringComparison.Ordinal);
+                    if (index != -1)
+                    {
+                        File.SetAttributes(file.FullName, FileAttributes.Normal);
+                    }
+
+                    file.Delete();
+                }
+
+                directory.Delete();
+            }
         }
     }
 }

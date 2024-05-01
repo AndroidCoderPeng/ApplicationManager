@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -217,6 +216,18 @@ namespace ApplicationManager.ViewModels
             }
         }
 
+        private string _filePath;
+
+        public string FilePath
+        {
+            get => _filePath;
+            set
+            {
+                _filePath = value;
+                RaisePropertyChanged();
+            }
+        }
+
         private string _applicationName;
 
         public string ApplicationName
@@ -265,6 +276,18 @@ namespace ApplicationManager.ViewModels
             }
         }
 
+        private bool _isTaskBusy;
+
+        public bool IsTaskBusy
+        {
+            get => _isTaskBusy;
+            set
+            {
+                _isTaskBusy = value;
+                RaisePropertyChanged();
+            }
+        }
+
         private string _deviceState;
 
         public string DeviceState
@@ -296,10 +319,8 @@ namespace ApplicationManager.ViewModels
 
         #endregion
 
-        private readonly BackgroundWorker _backgroundWorker;
         private string _selectedDeviceAddress = string.Empty;
         private string _selectedPackage = string.Empty;
-        private string _apkPath = string.Empty;
 
         /// <summary>
         /// DispatcherTimer与窗体为同一个线程，故如果频繁的执行DispatcherTimer的话，会造成主线程的卡顿。
@@ -310,13 +331,6 @@ namespace ApplicationManager.ViewModels
 
         public MainWindowViewModel()
         {
-            _backgroundWorker = new BackgroundWorker();
-            _backgroundWorker.WorkerReportsProgress = true;
-            _backgroundWorker.WorkerSupportsCancellation = true;
-            _backgroundWorker.DoWork += Worker_OnDoWork;
-            _backgroundWorker.ProgressChanged += Worker_OnProgressChanged;
-            _backgroundWorker.RunWorkerCompleted += Worker_OnRunWorkerCompleted;
-
             //异步尝试获取设备列表，可能会为空，因为开发者模式可能没开
             Task.Run(delegate { DeviceItems = GetDevices(); });
 
@@ -385,15 +399,15 @@ namespace ApplicationManager.ViewModels
                 };
                 var result = fileDialog.ShowDialog();
                 if (result != true) return;
-                _apkPath = fileDialog.FileName;
+                FilePath = fileDialog.FileName;
                 //解压缩获取apk文件基本信息
-                if (_backgroundWorker.IsBusy)
+                if (_isTaskBusy)
                 {
                     //TODO 提示用户
                     return;
                 }
 
-                _backgroundWorker.RunWorkerAsync();
+                GetApplicationInfo(_filePath);
             });
 
             UninstallCommand = new DelegateCommand(delegate
@@ -613,79 +627,68 @@ namespace ApplicationManager.ViewModels
             ApplicationPackages = await task;
         }
 
-        private void Worker_OnDoWork(object sender, DoWorkEventArgs e)
-        {
-            var destinationDirectory = $"{FilePathManager.Get.GetDesktopPath()}\\Temp";
-            ZipFile.ExtractToDirectory(_apkPath, destinationDirectory);
-        }
-
-        private void Worker_OnProgressChanged(object sender, ProgressChangedEventArgs e)
-        {
-        }
-
-        private void Worker_OnRunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-        {
-            var file = new FileInfo(_apkPath);
-            ApplicationName = file.Name;
-            //解析APK文件
-            ExtractApkResources();
-            var size = (double)file.Length / 1024 / 1024;
-            FileSize = $"{Math.Round(size, 1)}M";
-        }
-
         /// <summary>
-        /// 从APK里面提取资源
+        /// 异步解析APK获取APK基本信息
         /// </summary>
-        private void ExtractApkResources()
+        private async void GetApplicationInfo(string apkPath)
         {
-            byte[] manifestData = null;
-            byte[] resourcesData = null;
-            using (var zip = new ZipInputStream(File.OpenRead(_apkPath)))
+            var destinationDirectory = $@"{AppDomain.CurrentDomain.BaseDirectory}\Temp";
+            var task = Task.Run(delegate
             {
-                using (var filestream = new FileStream(_apkPath, FileMode.Open, FileAccess.Read))
+                IsTaskBusy = true;
+                ZipFile.ExtractToDirectory(apkPath, destinationDirectory);
+
+                byte[] manifestData = null;
+                byte[] resourcesData = null;
+                using (var zip = new ZipInputStream(File.OpenRead(apkPath)))
                 {
-                    var zipFile = new ICSharpCode.SharpZipLib.Zip.ZipFile(filestream);
-                    ZipEntry zipEntry;
-                    while ((zipEntry = zip.GetNextEntry()) != null)
+                    using (var filestream = new FileStream(apkPath, FileMode.Open, FileAccess.Read))
                     {
-                        switch (zipEntry.Name.ToLower())
+                        var zipFile = new ICSharpCode.SharpZipLib.Zip.ZipFile(filestream);
+                        ZipEntry zipEntry;
+                        while ((zipEntry = zip.GetNextEntry()) != null)
                         {
-                            case "androidmanifest.xml":
-                                manifestData = new byte[50 * 1024];
-                                using (var stream = zipFile.GetInputStream(zipEntry))
-                                {
-                                    stream.Read(manifestData, 0, manifestData.Length);
-                                }
-
-                                break;
-
-                            case "resources.arsc":
-                                using (var stream = zipFile.GetInputStream(zipEntry))
-                                {
-                                    using (var s = new BinaryReader(stream))
+                            switch (zipEntry.Name.ToLower())
+                            {
+                                case "androidmanifest.xml":
+                                    manifestData = new byte[50 * 1024];
+                                    using (var stream = zipFile.GetInputStream(zipEntry))
                                     {
-                                        resourcesData = s.ReadBytes((int)zipEntry.Size);
+                                        var read = stream.Read(manifestData, 0, manifestData.Length);
                                     }
-                                }
 
-                                break;
+                                    break;
+
+                                case "resources.arsc":
+                                    using (var stream = zipFile.GetInputStream(zipEntry))
+                                    {
+                                        using (var s = new BinaryReader(stream))
+                                        {
+                                            resourcesData = s.ReadBytes((int)zipEntry.Size);
+                                        }
+                                    }
+
+                                    break;
+                            }
                         }
                     }
                 }
-            }
 
-            var apkReader = new ApkReader();
-            try
-            {
-                var info = apkReader.extractInfo(manifestData, resourcesData);
-                PackageName = info.packageName;
-                ApplicationVersion = info.versionName;
-            }
-            catch (Exception)
-            {
-                PackageName = "解析失败";
-                ApplicationVersion = "解析失败";
-            }
+                var apkReader = new ApkReader();
+                return apkReader.extractInfo(manifestData, resourcesData);
+            });
+
+            var file = new FileInfo(apkPath);
+            ApplicationName = file.Name;
+            var info = await task;
+            PackageName = info.packageName;
+            ApplicationVersion = info.versionName;
+            var size = (double)file.Length / 1024 / 1024;
+            FileSize = $"{Math.Round(size, 1)}M";
+            //删除生成的Temp文件夹下面的文件
+            var directory = new DirectoryInfo(destinationDirectory);
+            directory.DeleteDirectoryFiles();
+            IsTaskBusy = false;
         }
     }
 }

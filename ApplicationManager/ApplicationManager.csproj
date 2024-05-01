@@ -107,6 +107,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Converters\ProgressBarVisibilityConverter.cs" />
     <Compile Include="Models\DeviceModel.cs" />
     <Compile Include="Utils\CommandCreator.cs" />
     <Compile Include="Utils\CommandManager.cs" />
