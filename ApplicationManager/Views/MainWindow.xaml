@@ -338,17 +338,39 @@
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
-                <TextBlock
-                    Grid.Column="0"
-                    Margin="10"
-                    VerticalAlignment="Center"
-                    FontSize="14"
-                    Text="非系统软件包" />
+                <Grid Grid.Row="0" Margin="10">
+                    <TextBlock
+                        VerticalAlignment="Center"
+                        FontSize="14"
+                        Text="非系统软件包" />
 
-                <ListView
+                    <Button
+                        HorizontalAlignment="Right"
+                        Command="{Binding RefreshApplicationCommand}"
+                        Content="刷新" />
+                </Grid>
+
+                <DataGrid
+                    x:Name="PackageDataGrid"
                     Grid.Row="1"
                     Margin="10,0"
-                    ItemsSource="{Binding ApplicationPackages}" />
+                    AutoGenerateColumns="False"
+                    HeadersVisibility="None"
+                    ItemsSource="{Binding ApplicationPackages}">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn
+                            Binding="{Binding}"
+                            CanUserResize="False"
+                            FontSize="14"
+                            IsReadOnly="True" />
+                    </DataGrid.Columns>
+
+                    <b:Interaction.Triggers>
+                        <b:EventTrigger EventName="SelectionChanged">
+                            <b:InvokeCommandAction Command="{Binding PackageSelectedCommand}" CommandParameter="{Binding ElementName=PackageDataGrid, Path=SelectedItem}" />
+                        </b:EventTrigger>
+                    </b:Interaction.Triggers>
+                </DataGrid>
 
                 <Grid Grid.Row="2" Margin="10">
                     <Grid.RowDefinitions>

@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Timers;
 using ApplicationManager.Utils;
+using HandyControl.Controls;
 using Prism.Commands;
 using Prism.Mvvm;
 
@@ -197,6 +199,18 @@ namespace ApplicationManager.ViewModels
             }
         }
 
+        private ObservableCollection<string> _applicationPackages;
+
+        public ObservableCollection<string> ApplicationPackages
+        {
+            get => _applicationPackages;
+            set
+            {
+                _applicationPackages = value;
+                RaisePropertyChanged();
+            }
+        }
+
         private string _applicationName;
 
         public string ApplicationName
@@ -263,6 +277,8 @@ namespace ApplicationManager.ViewModels
 
         public DelegateCommand RefreshDeviceCommand { set; get; }
         public DelegateCommand<string> DeviceSelectedCommand { set; get; }
+        public DelegateCommand RefreshApplicationCommand { set; get; }
+        public DelegateCommand<string> PackageSelectedCommand { set; get; }
         public DelegateCommand RebootDeviceCommand { set; get; }
         public DelegateCommand DisconnectDeviceCommand { set; get; }
         public DelegateCommand OutputImageCommand { set; get; }
@@ -274,7 +290,8 @@ namespace ApplicationManager.ViewModels
 
         #endregion
 
-        private string _selectDeviceAddress = string.Empty;
+        private string _selectedDeviceAddress = string.Empty;
+        private string _selectedPackage = string.Empty;
 
         /// <summary>
         /// DispatcherTimer与窗体为同一个线程，故如果频繁的执行DispatcherTimer的话，会造成主线程的卡顿。
@@ -290,8 +307,9 @@ namespace ApplicationManager.ViewModels
 
             _refreshDeviceTimer.Elapsed += delegate
             {
-                if (string.IsNullOrEmpty(_selectDeviceAddress))
+                if (string.IsNullOrEmpty(_selectedDeviceAddress))
                 {
+                    //TODO 提示用户
                     return;
                 }
 
@@ -303,9 +321,43 @@ namespace ApplicationManager.ViewModels
 
             DeviceSelectedCommand = new DelegateCommand<string>(address =>
             {
-                _selectDeviceAddress = address;
+                _selectedDeviceAddress = address;
                 //异步线程处理
                 Task.Run(GetDeviceDetail);
+
+                //另起线程获取第三方应用列表
+                GetDeviceApplication();
+            });
+
+            RefreshApplicationCommand = new DelegateCommand(delegate
+            {
+                if (string.IsNullOrEmpty(_selectedDeviceAddress))
+                {
+                    //TODO 提示用户
+                    return;
+                }
+
+                GetDeviceApplication();
+            });
+
+            PackageSelectedCommand = new DelegateCommand<string>(package => { _selectedPackage = package; });
+
+            UninstallCommand = new DelegateCommand(delegate
+            {
+                if (string.IsNullOrEmpty(_selectedPackage))
+                {
+                    //TODO 提示用户
+                    return;
+                }
+
+                var creator = new CommandCreator();
+                //adb uninstall 卸载应用（应用包名）
+                var uninstallCommand = creator.Init().Append("uninstall").Append(_selectedPackage).Build();
+                CommandManager.Get.ExecuteCommand(uninstallCommand, delegate(string value)
+                {
+                    Growl.Success(value);
+                    ApplicationPackages.Remove(_selectedPackage);
+                });
             });
         }
 
@@ -464,6 +516,35 @@ namespace ApplicationManager.ViewModels
                     }
                 }
             });
+        }
+
+        /// <summary>
+        /// 获取设备第三方应用列表
+        /// </summary>
+        private async void GetDeviceApplication()
+        {
+            ApplicationPackages = new ObservableCollection<string>();
+            var task = Task.Run(delegate
+            {
+                var result = new ObservableCollection<string>();
+                var creator = new CommandCreator();
+                //adb shell pm list package -3 列出第三方的应用
+                var packageCommand = creator.Init()
+                    .Append("shell").Append("pm").Append("list").Append("package").Append("-3").Build();
+                CommandManager.Get.ExecuteCommand(packageCommand, delegate(string value)
+                {
+                    var strings = value.Split(new[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
+                    var packages = strings.Select(
+                        temp => temp.Split(new[] { ":" }, StringSplitOptions.None)[1]
+                    );
+                    foreach (var package in packages)
+                    {
+                        result.Add(package);
+                    }
+                });
+                return result;
+            });
+            ApplicationPackages = await task;
         }
     }
 }
