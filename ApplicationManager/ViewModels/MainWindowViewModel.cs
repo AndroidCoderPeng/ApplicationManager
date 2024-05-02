@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Timers;
+using System.Windows;
 using ApkNet.ApkReader;
 using ApplicationManager.DataService;
 using ApplicationManager.Models;
@@ -330,13 +330,14 @@ namespace ApplicationManager.ViewModels
         public DelegateCommand OutputImageCommand { set; get; }
         public DelegateCommand ImportImageCommand { set; get; }
         public DelegateCommand ScreenshotCommand { set; get; }
+        public DelegateCommand<DragEventArgs> DropFileCommand { set; get; }
         public DelegateCommand SelectFileCommand { set; get; }
         public DelegateCommand UninstallCommand { set; get; }
         public DelegateCommand InstallCommand { set; get; }
 
         #endregion
 
-        private List<PermissionModel> _permissions;
+        private readonly List<PermissionModel> _permissions;
         private string _selectedDeviceAddress = string.Empty;
         private string _selectedPackage = string.Empty;
 
@@ -411,6 +412,20 @@ namespace ApplicationManager.ViewModels
                 CommandManager.Get.ExecuteCommand(screenCapCommand, delegate { Growl.Success("屏幕抓取成功"); });
             });
 
+            DropFileCommand = new DelegateCommand<DragEventArgs>(delegate(DragEventArgs e)
+            {
+                var result = ((Array)e.Data.GetData(DataFormats.FileDrop)).GetValue(0).ToString();
+                if (string.IsNullOrEmpty(result) || !result.EndsWith(".apk"))
+                {
+                    //TODO 提示用户
+                    return;
+                }
+
+                FilePath = result;
+                //解压缩获取apk文件基本信息。不能用adb获取APK信息，因为选择的APK不一定是安装了的
+                GetApplicationInfo(_filePath);
+            });
+
             SelectFileCommand = new DelegateCommand(delegate
             {
                 var fileDialog = new OpenFileDialog
@@ -422,19 +437,6 @@ namespace ApplicationManager.ViewModels
                 var result = fileDialog.ShowDialog();
                 if (result != true) return;
                 FilePath = fileDialog.FileName;
-
-                //获取apk文件基本信息
-                Debug.Assert(_filePath != null, nameof(_filePath) + " != null");
-                var file = new FileInfo(_filePath);
-                ApplicationName = file.Name;
-                var size = (double)file.Length / 1024 / 1024;
-                FileSize = $"{Math.Round(size, 1)}M";
-
-                if (_isTaskBusy)
-                {
-                    //TODO 提示用户
-                    return;
-                }
 
                 //解压缩获取apk文件基本信息。不能用adb获取APK信息，因为选择的APK不一定是安装了的
                 GetApplicationInfo(_filePath);
@@ -672,6 +674,18 @@ namespace ApplicationManager.ViewModels
         /// </summary>
         private async void GetApplicationInfo(string apkPath)
         {
+            if (_isTaskBusy)
+            {
+                //TODO 提示用户
+                return;
+            }
+            
+            //获取apk文件基本信息
+            var file = new FileInfo(apkPath);
+            ApplicationName = file.Name;
+            var size = (double)file.Length / 1024 / 1024;
+            FileSize = $"{Math.Round(size, 1)}M";
+            
             var destinationDirectory = $@"{AppDomain.CurrentDomain.BaseDirectory}\Temp";
             var directory = new DirectoryInfo(destinationDirectory);
             if (directory.Exists)
