@@ -414,7 +414,14 @@ namespace ApplicationManager.ViewModels
 
             DropFileCommand = new DelegateCommand<DragEventArgs>(delegate(DragEventArgs e)
             {
-                var result = ((Array)e.Data.GetData(DataFormats.FileDrop)).GetValue(0).ToString();
+                var data = e.Data.GetData(DataFormats.FileDrop);
+                if (data == null)
+                {
+                    //TODO 提示用户
+                    return;
+                }
+
+                var result = ((Array)data).GetValue(0).ToString();
                 if (string.IsNullOrEmpty(result) || !result.EndsWith(".apk"))
                 {
                     //TODO 提示用户
@@ -679,13 +686,13 @@ namespace ApplicationManager.ViewModels
                 //TODO 提示用户
                 return;
             }
-            
+
             //获取apk文件基本信息
             var file = new FileInfo(apkPath);
             ApplicationName = file.Name;
             var size = (double)file.Length / 1024 / 1024;
             FileSize = $"{Math.Round(size, 1)}M";
-            
+
             var destinationDirectory = $@"{AppDomain.CurrentDomain.BaseDirectory}\Temp";
             var directory = new DirectoryInfo(destinationDirectory);
             if (directory.Exists)
