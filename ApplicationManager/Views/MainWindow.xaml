@@ -9,8 +9,8 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:vm="clr-namespace:ApplicationManager.ViewModels"
     Title="Android软件包管理（Android Package Management）"
-    Width="1000"
-    Height="755"
+    Width="900"
+    Height="715"
     d:DataContext="{d:DesignInstance Type=vm:MainWindowViewModel}"
     ResizeMode="CanMinimize"
     WindowStartupLocation="CenterScreen"
@@ -27,7 +27,7 @@
                         <Border
                             x:Name="ListBoxItemBorder"
                             Padding="10"
-                            CornerRadius="5">
+                            CornerRadius="3">
                             <ContentPresenter HorizontalAlignment="Left" VerticalAlignment="Center" />
                         </Border>
 
@@ -77,7 +77,6 @@
                     <TextBlock
                         Grid.Column="0"
                         VerticalAlignment="Center"
-                        FontSize="14"
                         Text="选择设备" />
 
                     <ComboBox
@@ -129,13 +128,11 @@
                             <TextBlock
                                 Grid.Column="0"
                                 VerticalAlignment="Center"
-                                FontSize="14"
                                 Text="Android ID" />
 
                             <TextBlock
                                 Grid.Column="1"
                                 VerticalAlignment="Center"
-                                FontSize="14"
                                 Text="{Binding AndroidId}" />
                         </Grid>
 
@@ -148,13 +145,11 @@
                             <TextBlock
                                 Grid.Column="0"
                                 VerticalAlignment="Center"
-                                FontSize="14"
                                 Text="设备型号" />
 
                             <TextBlock
                                 Grid.Column="1"
                                 VerticalAlignment="Center"
-                                FontSize="14"
                                 Text="{Binding DeviceModel}" />
                         </Grid>
 
@@ -167,13 +162,11 @@
                             <TextBlock
                                 Grid.Column="0"
                                 VerticalAlignment="Center"
-                                FontSize="14"
                                 Text="设备品牌" />
 
                             <TextBlock
                                 Grid.Column="1"
                                 VerticalAlignment="Center"
-                                FontSize="14"
                                 Text="{Binding DeviceBrand}" />
                         </Grid>
 
@@ -186,13 +179,11 @@
                             <TextBlock
                                 Grid.Column="0"
                                 VerticalAlignment="Center"
-                                FontSize="14"
                                 Text="设备名称" />
 
                             <TextBlock
                                 Grid.Column="1"
                                 VerticalAlignment="Center"
-                                FontSize="14"
                                 Text="{Binding DeviceName}" />
                         </Grid>
 
@@ -205,13 +196,11 @@
                             <TextBlock
                                 Grid.Column="0"
                                 VerticalAlignment="Center"
-                                FontSize="14"
                                 Text="处理器型号" />
 
                             <TextBlock
                                 Grid.Column="1"
                                 VerticalAlignment="Center"
-                                FontSize="14"
                                 Text="{Binding DeviceCpu}" />
                         </Grid>
 
@@ -224,13 +213,11 @@
                             <TextBlock
                                 Grid.Column="0"
                                 VerticalAlignment="Center"
-                                FontSize="14"
                                 Text="ABI架构" />
 
                             <TextBlock
                                 Grid.Column="1"
                                 VerticalAlignment="Center"
-                                FontSize="14"
                                 Text="{Binding DeviceAbi}"
                                 TextWrapping="Wrap" />
                         </Grid>
@@ -244,13 +231,11 @@
                             <TextBlock
                                 Grid.Column="0"
                                 VerticalAlignment="Center"
-                                FontSize="14"
                                 Text="Android版本" />
 
                             <TextBlock
                                 Grid.Column="1"
                                 VerticalAlignment="Center"
-                                FontSize="14"
                                 Text="{Binding AndroidVersion}" />
                         </Grid>
 
@@ -263,13 +248,11 @@
                             <TextBlock
                                 Grid.Column="0"
                                 VerticalAlignment="Center"
-                                FontSize="14"
                                 Text="屏幕分辨率" />
 
                             <TextBlock
                                 Grid.Column="1"
                                 VerticalAlignment="Center"
-                                FontSize="14"
                                 Text="{Binding DeviceSize}" />
                         </Grid>
 
@@ -282,13 +265,11 @@
                             <TextBlock
                                 Grid.Column="0"
                                 VerticalAlignment="Center"
-                                FontSize="14"
                                 Text="屏幕密度" />
 
                             <TextBlock
                                 Grid.Column="1"
                                 VerticalAlignment="Center"
-                                FontSize="14"
                                 Text="{Binding DeviceDensity}" />
                         </Grid>
 
@@ -298,16 +279,10 @@
                                 <ColumnDefinition Width="1.75*" />
                             </Grid.ColumnDefinitions>
 
-                            <TextBlock
-                                Grid.Column="0"
-                                FontSize="14"
-                                Text="内存信息" />
+                            <TextBlock Grid.Column="0" Text="内存信息" />
 
                             <StackPanel Grid.Column="1" Orientation="Vertical">
-                                <TextBlock
-                                    VerticalAlignment="Center"
-                                    FontSize="14"
-                                    Text="{Binding MemoryRatio}" />
+                                <TextBlock VerticalAlignment="Center" Text="{Binding MemoryRatio}" />
 
                                 <hc:WaveProgressBar
                                     Width="110"
@@ -326,16 +301,10 @@
                                 <ColumnDefinition Width="1.75*" />
                             </Grid.ColumnDefinitions>
 
-                            <TextBlock
-                                Grid.Column="0"
-                                FontSize="14"
-                                Text="电池状态" />
+                            <TextBlock Grid.Column="0" Text="电池状态" />
 
                             <StackPanel Grid.Column="1" Orientation="Vertical">
-                                <TextBlock
-                                    VerticalAlignment="Center"
-                                    FontSize="14"
-                                    Text="{Binding BatteryState}" />
+                                <TextBlock VerticalAlignment="Center" Text="{Binding BatteryState}" />
 
                                 <ProgressBar
                                     Margin="0,7,0,0"
@@ -353,13 +322,11 @@
                             <TextBlock
                                 Grid.Column="0"
                                 VerticalAlignment="Center"
-                                FontSize="14"
                                 Text="电池温度" />
 
                             <TextBlock
                                 Grid.Column="1"
                                 VerticalAlignment="Center"
-                                FontSize="14"
                                 Text="{Binding BatteryTemperature}" />
                         </Grid>
                     </Grid>
@@ -374,10 +341,7 @@
                 </Grid.RowDefinitions>
 
                 <Grid Grid.Row="0" Margin="10">
-                    <TextBlock
-                        VerticalAlignment="Center"
-                        FontSize="14"
-                        Text="非系统软件包" />
+                    <TextBlock VerticalAlignment="Center" Text="非系统软件包" />
 
                     <Button
                         HorizontalAlignment="Right"
@@ -417,12 +381,15 @@
 
                     <UniformGrid Grid.Row="0" Columns="2">
                         <Button
-                            Width="105"
+                            Width="95"
+                            HorizontalAlignment="Left"
                             Command="{Binding RebootDeviceCommand}"
                             Content="重启设备"
                             Style="{StaticResource ButtonSuccess}" />
+
                         <Button
-                            Width="105"
+                            Width="95"
+                            HorizontalAlignment="Right"
                             Command="{Binding DisconnectDeviceCommand}"
                             Content="断开设备"
                             Style="{StaticResource ButtonWarning}" />
@@ -433,19 +400,21 @@
                         Margin="0,10"
                         Columns="2">
                         <Button
-                            Width="105"
+                            Width="95"
+                            HorizontalAlignment="Left"
                             Command="{Binding OutputImageCommand}"
-                            Content="导出截屏到电脑" />
+                            Content="导出截屏" />
 
                         <Button
-                            Width="105"
+                            Width="95"
+                            HorizontalAlignment="Right"
                             Command="{Binding ImportImageCommand}"
-                            Content="复制图片到设备" />
+                            Content="导入图片" />
                     </UniformGrid>
 
                     <Button
                         Grid.Row="2"
-                        Width="220"
+                        Width="200"
                         Command="{Binding ScreenshotCommand}"
                         Content="截屏"
                         Style="{StaticResource ButtonPrimary}" />
@@ -483,7 +452,6 @@
                             Margin="0,0,0,15"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Bottom"
-                            FontSize="14"
                             Text="将安装包拖到此处或者点击“+”添加" />
                     </Grid>
                 </Border>
@@ -514,13 +482,11 @@
                         <TextBlock
                             Grid.Column="0"
                             VerticalAlignment="Center"
-                            FontSize="14"
                             Text="文件路径" />
 
                         <TextBlock
                             Grid.Column="1"
                             VerticalAlignment="Center"
-                            FontSize="14"
                             Text="{Binding FilePath}"
                             ToolTip="{Binding FilePath}" />
                     </Grid>
@@ -534,13 +500,11 @@
                         <TextBlock
                             Grid.Column="0"
                             VerticalAlignment="Center"
-                            FontSize="14"
-                            Text="软件名" />
+                            Text="软件名称" />
 
                         <TextBlock
                             Grid.Column="1"
                             VerticalAlignment="Center"
-                            FontSize="14"
                             Text="{Binding ApplicationName}"
                             ToolTip="{Binding ApplicationName}" />
                     </Grid>
@@ -554,13 +518,11 @@
                         <TextBlock
                             Grid.Column="0"
                             VerticalAlignment="Center"
-                            FontSize="14"
                             Text="软件包名" />
 
                         <TextBlock
                             Grid.Column="1"
                             VerticalAlignment="Center"
-                            FontSize="14"
                             Text="{Binding PackageName}" />
                     </Grid>
 
@@ -573,13 +535,11 @@
                         <TextBlock
                             Grid.Column="0"
                             VerticalAlignment="Center"
-                            FontSize="14"
                             Text="软件版本" />
 
                         <TextBlock
                             Grid.Column="1"
                             VerticalAlignment="Center"
-                            FontSize="14"
                             Text="{Binding ApplicationVersion}" />
                     </Grid>
 
@@ -592,13 +552,11 @@
                         <TextBlock
                             Grid.Column="0"
                             VerticalAlignment="Center"
-                            FontSize="14"
                             Text="文件大小" />
 
                         <TextBlock
                             Grid.Column="1"
                             VerticalAlignment="Center"
-                            FontSize="14"
                             Text="{Binding FileSize}" />
                     </Grid>
 
@@ -608,10 +566,7 @@
                             <ColumnDefinition Width="4*" />
                         </Grid.ColumnDefinitions>
 
-                        <TextBlock
-                            Grid.Column="0"
-                            FontSize="14"
-                            Text="软件权限" />
+                        <TextBlock Grid.Column="0" Text="软件权限" />
 
                         <ListBox Grid.Column="1" ItemsSource="{Binding PermissionItems}">
                             <ListBox.ItemTemplate>
@@ -641,7 +596,7 @@
 
                         <Button
                             Grid.Column="0"
-                            Width="155"
+                            Width="135"
                             HorizontalAlignment="Left"
                             Command="{Binding UninstallCommand}"
                             Content="卸载"
@@ -649,7 +604,7 @@
 
                         <Button
                             Grid.Column="1"
-                            Width="155"
+                            Width="135"
                             HorizontalAlignment="Right"
                             Command="{Binding InstallCommand}"
                             Content="安装"
@@ -688,7 +643,6 @@
             <TextBlock
                 Grid.Column="1"
                 Margin="10"
-                FontSize="14"
                 Text="{Binding DeviceState}" />
         </Grid>
     </Grid>
