@@ -8,6 +8,7 @@
     xmlns:hc="https://handyorg.github.io/handycontrol"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:vm="clr-namespace:ApplicationManager.ViewModels"
+    x:Name="TargetWindow"
     Title="Android软件包管理（Android Package Management）"
     Width="900"
     Height="715"
@@ -381,7 +382,10 @@
                         <RowDefinition />
                     </Grid.RowDefinitions>
 
-                    <UniformGrid Grid.Row="0" Columns="2">
+                    <UniformGrid
+                        Grid.Row="0"
+                        Width="200"
+                        Columns="2">
                         <Button
                             Width="95"
                             HorizontalAlignment="Left"
@@ -398,28 +402,10 @@
                             Style="{StaticResource ButtonWarning}" />
                     </UniformGrid>
 
-                    <UniformGrid
-                        Grid.Row="1"
-                        Margin="0,10"
-                        Columns="2">
-                        <Button
-                            Width="95"
-                            HorizontalAlignment="Left"
-                            Command="{Binding OutputImageCommand}"
-                            Content="导出截屏"
-                            IsEnabled="{Binding IsDisconnected, Converter={StaticResource ButtonStatusConverterKey}}" />
-
-                        <Button
-                            Width="95"
-                            HorizontalAlignment="Right"
-                            Command="{Binding ImportImageCommand}"
-                            Content="导入图片"
-                            IsEnabled="{Binding IsDisconnected, Converter={StaticResource ButtonStatusConverterKey}}" />
-                    </UniformGrid>
-
                     <Button
                         Grid.Row="2"
                         Width="200"
+                        Margin="0,10,0,0"
                         Command="{Binding ScreenshotCommand}"
                         Content="截屏"
                         IsEnabled="{Binding IsDisconnected, Converter={StaticResource ButtonStatusConverterKey}}"
@@ -614,6 +600,7 @@
                             Width="135"
                             HorizontalAlignment="Right"
                             Command="{Binding InstallCommand}"
+                            CommandParameter="{Binding ElementName=TargetWindow}"
                             Content="安装"
                             IsEnabled="{Binding IsDisconnected, Converter={StaticResource ButtonStatusConverterKey}}"
                             Style="{StaticResource ButtonPrimary}" />

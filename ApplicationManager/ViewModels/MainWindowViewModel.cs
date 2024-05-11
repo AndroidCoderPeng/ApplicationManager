@@ -11,6 +11,7 @@ using ApkNet.ApkReader;
 using ApplicationManager.DataService;
 using ApplicationManager.Models;
 using ApplicationManager.Utils;
+using ApplicationManager.Views;
 using HandyControl.Controls;
 using ICSharpCode.SharpZipLib.Zip;
 using Microsoft.Win32;
@@ -317,7 +318,7 @@ namespace ApplicationManager.ViewModels
             }
         }
 
-        private bool _isDisconnected;
+        private bool _isDisconnected = true;
 
         public bool IsDisconnected
         {
@@ -339,13 +340,11 @@ namespace ApplicationManager.ViewModels
         public DelegateCommand<string> PackageSelectedCommand { set; get; }
         public DelegateCommand RebootDeviceCommand { set; get; }
         public DelegateCommand DisconnectDeviceCommand { set; get; }
-        public DelegateCommand OutputImageCommand { set; get; }
-        public DelegateCommand ImportImageCommand { set; get; }
         public DelegateCommand ScreenshotCommand { set; get; }
         public DelegateCommand<DragEventArgs> DropFileCommand { set; get; }
         public DelegateCommand SelectFileCommand { set; get; }
         public DelegateCommand UninstallCommand { set; get; }
-        public DelegateCommand InstallCommand { set; get; }
+        public DelegateCommand<MainWindow> InstallCommand { set; get; }
 
         #endregion
 
@@ -414,6 +413,7 @@ namespace ApplicationManager.ViewModels
 
             PackageSelectedCommand = new DelegateCommand<string>(package => { _selectedPackage = package; });
 
+            //TODO
             RebootDeviceCommand = new DelegateCommand(delegate { });
 
             DisconnectDeviceCommand = new DelegateCommand(delegate
@@ -451,33 +451,21 @@ namespace ApplicationManager.ViewModels
                 }
             });
 
-            OutputImageCommand = new DelegateCommand(delegate { });
-
-            ImportImageCommand = new DelegateCommand(delegate { });
-
-            ScreenshotCommand = new DelegateCommand(delegate
-            {
-                var creator = new CommandCreator();
-                //adb shell screencap -p /sdcard/screen.png 截取屏幕截图并保存到指定位置
-                var screenCapCommand = creator.Init()
-                    .Append("shell").Append("screencap").Append("-p")
-                    .Append($"/sdcard/{DateTime.Now:yyyyMMddHHmmss}.png").Build();
-                CommandManager.Get.ExecuteCommand(screenCapCommand, delegate { Growl.Success("屏幕抓取成功"); });
-            });
+            ScreenshotCommand = new DelegateCommand(TakeScreenshot);
 
             DropFileCommand = new DelegateCommand<DragEventArgs>(delegate(DragEventArgs e)
             {
                 var data = e.Data.GetData(DataFormats.FileDrop);
                 if (data == null)
                 {
-                    //TODO 提示用户
+                    ShowAlertMessageDialog("操作失败", "文件路径未知");
                     return;
                 }
 
                 var result = ((Array)data).GetValue(0).ToString();
                 if (string.IsNullOrEmpty(result) || !result.EndsWith(".apk"))
                 {
-                    //TODO 提示用户
+                    ShowAlertMessageDialog("操作失败", "文件路径未知");
                     return;
                 }
 
@@ -506,41 +494,25 @@ namespace ApplicationManager.ViewModels
             {
                 if (string.IsNullOrEmpty(_selectedPackage))
                 {
-                    //TODO 提示用户
+                    ShowAlertMessageDialog("操作失败", "请先选择需要卸载的应用");
                     return;
                 }
 
-                var creator = new CommandCreator();
-                //adb uninstall 卸载应用（应用包名）
-                var uninstallCommand = creator.Init().Append("uninstall").Append(_selectedPackage).Build();
-                CommandManager.Get.ExecuteCommand(uninstallCommand, delegate(string value)
+                var result = MessageBox.Show("确定卸载该应用？", "卸载应用", MessageBoxButton.OKCancel, MessageBoxImage.Question);
+                if (result == MessageBoxResult.OK)
                 {
-                    Growl.Success(value);
-                    ApplicationPackages.Remove(_selectedPackage);
-                });
-            });
-
-            InstallCommand = new DelegateCommand(delegate
-            {
-                if (string.IsNullOrEmpty(_filePath))
-                {
-                    //TODO 提示用户
-                    return;
-                }
-
-                var creator = new CommandCreator();
-                //adb install -r 覆盖安装应用（apk）
-                var installCommand = creator.Init().Append("install").Append("-r").Append(_filePath).Build();
-                CommandManager.Get.ExecuteCommand(installCommand, delegate(string value)
-                {
-                    if (_applicationPackages != null)
+                    var creator = new CommandCreator();
+                    //adb uninstall 卸载应用（应用包名）
+                    var uninstallCommand = creator.Init().Append("uninstall").Append(_selectedPackage).Build();
+                    CommandManager.Get.ExecuteCommand(uninstallCommand, delegate(string value)
                     {
-                        ApplicationPackages.Add(_packageName);
-                    }
-
-                    Growl.Success(value);
-                });
+                        Growl.Success(value);
+                        ApplicationPackages.Remove(_selectedPackage);
+                    });
+                }
             });
+
+            InstallCommand = new DelegateCommand<MainWindow>(InstallApplication);
         }
 
         /// <summary>
@@ -729,6 +701,60 @@ namespace ApplicationManager.ViewModels
                 return result;
             });
             ApplicationPackages = await task;
+        }
+
+        /// <summary>
+        /// 异步截屏
+        /// </summary>
+        private async void TakeScreenshot()
+        {
+            var creator = new CommandCreator();
+            //adb shell screencap -p /sdcard/screen.png 截取屏幕截图并保存到指定位置
+            var screenCapCommand = creator.Init()
+                .Append("shell").Append("screencap").Append("-p")
+                .Append($"/sdcard/{DateTime.Now:yyyyMMddHHmmss}.png").Build();
+            var result = "";
+            var task = Task.Run(delegate
+            {
+                CommandManager.Get.ExecuteCommand(screenCapCommand, delegate(string value) { result = value; });
+                return result;
+            });
+
+            await task;
+            Growl.Success("屏幕抓取成功");
+        }
+
+        /// <summary>
+        /// 异步安装APK
+        /// </summary>
+        private async void InstallApplication(MainWindow window)
+        {
+            if (string.IsNullOrEmpty(_filePath))
+            {
+                ShowAlertMessageDialog("操作失败", "安装包路径错误，请重新选择");
+                return;
+            }
+
+            var creator = new CommandCreator();
+            //adb install -r 覆盖安装应用（apk）
+            var installCommand = creator.Init().Append("install").Append("-r").Append(_filePath).Build();
+            LoadingDialogHub.Get.ShowLoadingDialog(window, "软件安装中，请稍后......");
+            var result = "";
+            var task = Task.Run(delegate
+            {
+                CommandManager.Get.ExecuteCommand(installCommand, delegate(string value) { result = value; });
+                return result;
+            });
+            var s = await task;
+            LoadingDialogHub.Get.DismissLoadingDialog();
+            Growl.Success(s);
+            if (_applicationPackages != null)
+            {
+                if (_packageName != "解析失败")
+                {
+                    ApplicationPackages.Add(_packageName);
+                }
+            }
         }
 
         /// <summary>
