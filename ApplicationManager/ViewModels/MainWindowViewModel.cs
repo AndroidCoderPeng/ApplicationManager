@@ -413,8 +413,17 @@ namespace ApplicationManager.ViewModels
 
             PackageSelectedCommand = new DelegateCommand<string>(package => { _selectedPackage = package; });
 
-            //TODO
-            RebootDeviceCommand = new DelegateCommand(delegate { });
+            RebootDeviceCommand = new DelegateCommand(delegate
+            {
+                var result = MessageBox.Show("确定重启该设备？", "重启设备", MessageBoxButton.OKCancel, MessageBoxImage.Question);
+                if (result == MessageBoxResult.OK)
+                {
+                    var creator = new CommandCreator();
+                    //adb reboot 重启设备
+                    var rebootCommand = creator.Init().Append("reboot").Append(_selectedDevice).Build();
+                    CommandManager.Get.ExecuteCommand(rebootCommand, ResetValue);
+                }
+            });
 
             DisconnectDeviceCommand = new DelegateCommand(delegate
             {
@@ -424,30 +433,7 @@ namespace ApplicationManager.ViewModels
                     var creator = new CommandCreator();
                     //adb disconnect 设备号 adb断开某设备
                     var disconnectCommand = creator.Init().Append("disconnect").Append(_selectedDevice).Build();
-                    CommandManager.Get.ExecuteCommand(disconnectCommand, delegate(string value)
-                    {
-                        _refreshDeviceDetailTimer.Enabled = false;
-                        DeviceItems.Clear();
-
-                        AndroidId = string.Empty;
-                        DeviceModel = string.Empty;
-                        DeviceBrand = string.Empty;
-                        DeviceName = string.Empty;
-                        DeviceCpu = string.Empty;
-                        DeviceAbi = string.Empty;
-                        AndroidVersion = string.Empty;
-                        DeviceSize = string.Empty;
-                        DeviceDensity = string.Empty;
-                        MemoryRatio = string.Empty;
-                        MemoryProgress = 0;
-                        BatteryState = string.Empty;
-                        BatteryProgress = 0;
-                        BatteryTemperature = string.Empty;
-
-                        ApplicationPackages.Clear();
-
-                        IsDisconnected = value.Contains("disconnected");
-                    });
+                    CommandManager.Get.ExecuteCommand(disconnectCommand, ResetValue);
                 }
             });
 
@@ -546,6 +532,34 @@ namespace ApplicationManager.ViewModels
                 }
             });
             return result;
+        }
+
+        /// <summary>
+        /// 重置已绑定的值
+        /// </summary>
+        private void ResetValue(string value)
+        {
+            _refreshDeviceDetailTimer.Enabled = false;
+            DeviceItems.Clear();
+
+            AndroidId = string.Empty;
+            DeviceModel = string.Empty;
+            DeviceBrand = string.Empty;
+            DeviceName = string.Empty;
+            DeviceCpu = string.Empty;
+            DeviceAbi = string.Empty;
+            AndroidVersion = string.Empty;
+            DeviceSize = string.Empty;
+            DeviceDensity = string.Empty;
+            MemoryRatio = string.Empty;
+            MemoryProgress = 0;
+            BatteryState = string.Empty;
+            BatteryProgress = 0;
+            BatteryTemperature = string.Empty;
+
+            ApplicationPackages.Clear();
+
+            IsDisconnected = value.Contains("disconnected");
         }
 
         /// <summary>
@@ -764,7 +778,7 @@ namespace ApplicationManager.ViewModels
         {
             if (_isTaskBusy)
             {
-                //TODO 提示用户
+                ShowAlertMessageDialog("操作正忙", "正在解析安装包中，请稍后......");
                 return;
             }
 

@@ -30,5 +30,5 @@
 ###【选择设备并连接成功后，自动获取】adb shell cat /proc/meminfo 获取手机内存信息
 ###【选择设备并连接成功后，自动获取】adb shell dumpsys battery 监控电池信息
 
-【按钮】adb reboot 重启设备
+###【按钮】adb reboot 重启设备
 ###【按钮】adb disconnect <设备的IP地址>:端口号 adb断开某设备
