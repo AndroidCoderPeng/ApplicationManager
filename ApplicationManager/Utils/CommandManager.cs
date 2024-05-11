@@ -28,7 +28,8 @@ namespace ApplicationManager.Utils
         {
             using (var process = new Process())
             {
-                process.StartInfo.FileName = "adb";
+                //改为本程序adb路径
+                process.StartInfo.FileName = AppDomain.CurrentDomain.BaseDirectory + @"adb.exe";
                 process.StartInfo.Arguments = arguments;
                 process.StartInfo.UseShellExecute = false;
                 process.StartInfo.CreateNoWindow = true;

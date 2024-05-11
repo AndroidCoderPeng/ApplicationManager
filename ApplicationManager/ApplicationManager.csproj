@@ -115,7 +115,6 @@
     <Compile Include="Models\PermissionModel.cs" />
     <Compile Include="Utils\CommandCreator.cs" />
     <Compile Include="Utils\CommandManager.cs" />
-    <Compile Include="Utils\FilePathManager.cs" />
     <Compile Include="Utils\LoadingDialogHub.cs" />
     <Compile Include="Utils\MethodExtensions.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
