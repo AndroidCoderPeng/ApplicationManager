@@ -107,6 +107,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Converters\ButtonStatusConverter.cs" />
     <Compile Include="Converters\ProgressBarVisibilityConverter.cs" />
     <Compile Include="DataService\ApplicationDataServiceImpl.cs" />
     <Compile Include="DataService\IApplicationDataService.cs" />
@@ -154,5 +155,6 @@
     <Content Include="Permissions.json" />
     <Content Include="功能点修改版.txt" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

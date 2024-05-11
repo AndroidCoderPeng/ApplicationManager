@@ -16,7 +16,7 @@ using ICSharpCode.SharpZipLib.Zip;
 using Microsoft.Win32;
 using Prism.Commands;
 using Prism.Mvvm;
-using Enumerable = System.Linq.Enumerable;
+using MessageBox = System.Windows.MessageBox;
 using ZipFile = System.IO.Compression.ZipFile;
 
 namespace ApplicationManager.ViewModels
@@ -305,7 +305,7 @@ namespace ApplicationManager.ViewModels
             }
         }
 
-        private string _deviceState;
+        private string _deviceState = "设备已断开";
 
         public string DeviceState
         {
@@ -313,6 +313,18 @@ namespace ApplicationManager.ViewModels
             set
             {
                 _deviceState = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        private bool _isDisconnected;
+
+        public bool IsDisconnected
+        {
+            get => _isDisconnected;
+            set
+            {
+                _isDisconnected = value;
                 RaisePropertyChanged();
             }
         }
@@ -338,7 +350,7 @@ namespace ApplicationManager.ViewModels
         #endregion
 
         private readonly List<PermissionModel> _permissions;
-        private string _selectedDeviceAddress = string.Empty;
+        private string _selectedDevice = string.Empty;
         private string _selectedPackage = string.Empty;
 
         /// <summary>
@@ -348,44 +360,52 @@ namespace ApplicationManager.ViewModels
         /// </summary>
         private readonly Timer _refreshDeviceTimer = new Timer(3000);
 
+        private readonly Timer _refreshDeviceDetailTimer = new Timer(3000);
+
         public MainWindowViewModel(IApplicationDataService dataService)
         {
             //获取Android权限中英文对照列表
             var filePath = $@"{AppDomain.CurrentDomain.BaseDirectory}\Permissions.json";
             _permissions = dataService.GetAndroidPermissions(filePath);
 
-            //异步尝试获取设备列表，可能会为空，因为开发者模式可能没开
-            Task.Run(delegate { DeviceItems = GetDevices(); });
+            //定时刷新设备列表，可能会为空，因为开发者模式可能没开
+            _refreshDeviceTimer.Elapsed += delegate { DeviceItems = GetDevices(); };
+            _refreshDeviceTimer.Enabled = true;
 
-            _refreshDeviceTimer.Elapsed += delegate
+            _refreshDeviceDetailTimer.Elapsed += delegate
             {
-                if (string.IsNullOrEmpty(_selectedDeviceAddress))
+                if (string.IsNullOrEmpty(_selectedDevice))
                 {
-                    //TODO 提示用户
                     return;
                 }
 
                 GetDeviceDetail();
             };
-            _refreshDeviceTimer.Enabled = true;
+            _refreshDeviceDetailTimer.Enabled = true;
 
             RefreshDeviceCommand = new DelegateCommand(delegate { DeviceItems = GetDevices(); });
 
             DeviceSelectedCommand = new DelegateCommand<string>(address =>
             {
-                _selectedDeviceAddress = address;
+                _selectedDevice = address;
                 //异步线程处理
                 Task.Run(GetDeviceDetail);
 
                 //另起线程获取第三方应用列表
                 GetDeviceApplication();
+
+                IsDisconnected = false;
+                if (!_refreshDeviceDetailTimer.Enabled)
+                {
+                    _refreshDeviceDetailTimer.Enabled = true;
+                }
             });
 
             RefreshApplicationCommand = new DelegateCommand(delegate
             {
-                if (string.IsNullOrEmpty(_selectedDeviceAddress))
+                if (string.IsNullOrEmpty(_selectedDevice))
                 {
-                    //TODO 提示用户
+                    ShowAlertMessageDialog("未选中任何设备", "请先选择设备");
                     return;
                 }
 
@@ -396,7 +416,40 @@ namespace ApplicationManager.ViewModels
 
             RebootDeviceCommand = new DelegateCommand(delegate { });
 
-            DisconnectDeviceCommand = new DelegateCommand(delegate { });
+            DisconnectDeviceCommand = new DelegateCommand(delegate
+            {
+                var result = MessageBox.Show("确定断开连接该设备？", "断开连接", MessageBoxButton.OKCancel, MessageBoxImage.Question);
+                if (result == MessageBoxResult.OK)
+                {
+                    var creator = new CommandCreator();
+                    //adb disconnect 设备号 adb断开某设备
+                    var disconnectCommand = creator.Init().Append("disconnect").Append(_selectedDevice).Build();
+                    CommandManager.Get.ExecuteCommand(disconnectCommand, delegate(string value)
+                    {
+                        _refreshDeviceDetailTimer.Enabled = false;
+                        DeviceItems.Clear();
+
+                        AndroidId = string.Empty;
+                        DeviceModel = string.Empty;
+                        DeviceBrand = string.Empty;
+                        DeviceName = string.Empty;
+                        DeviceCpu = string.Empty;
+                        DeviceAbi = string.Empty;
+                        AndroidVersion = string.Empty;
+                        DeviceSize = string.Empty;
+                        DeviceDensity = string.Empty;
+                        MemoryRatio = string.Empty;
+                        MemoryProgress = 0;
+                        BatteryState = string.Empty;
+                        BatteryProgress = 0;
+                        BatteryTemperature = string.Empty;
+
+                        ApplicationPackages.Clear();
+
+                        IsDisconnected = value.Contains("disconnected");
+                    });
+                }
+            });
 
             OutputImageCommand = new DelegateCommand(delegate { });
 
@@ -503,20 +556,21 @@ namespace ApplicationManager.ViewModels
             {
                 if (value.Equals("List of devices attached"))
                 {
-                    //TODO
-                    Console.WriteLine(@"无设备");
-                    return;
+                    DeviceState = "设备已断开";
                 }
-
-                // 259dc884        device
-                // 192.168.3.11:40773      device
-                //解析返回值，序列化成 ObservableCollection
-                var strings = value.Split(new[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
-                for (var i = 1; i < strings.Length; i++)
+                else
                 {
-                    var newLine = Regex.Replace(strings[i], @"\s", "*");
-                    var split = newLine.Split(new[] { "*" }, StringSplitOptions.RemoveEmptyEntries);
-                    result.Add(split[0]);
+                    DeviceState = "设备已连接";
+                    // 259dc884        device
+                    // 192.168.3.11:40773      device
+                    //解析返回值，序列化成 ObservableCollection
+                    var strings = value.Split(new[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
+                    for (var i = 1; i < strings.Length; i++)
+                    {
+                        var newLine = Regex.Replace(strings[i], @"\s", "*");
+                        var split = newLine.Split(new[] { "*" }, StringSplitOptions.RemoveEmptyEntries);
+                        result.Add(split[0]);
+                    }
                 }
             });
             return result;
@@ -590,7 +644,8 @@ namespace ApplicationManager.ViewModels
                             break;
 
                         case "MemTotal":
-                            total = kvp.Value.FormatMemoryValue();
+                            //进一取整
+                            total = Math.Ceiling(kvp.Value.FormatMemoryValue());
                             break;
                     }
                 }
@@ -663,7 +718,7 @@ namespace ApplicationManager.ViewModels
                 CommandManager.Get.ExecuteCommand(packageCommand, delegate(string value)
                 {
                     var strings = value.Split(new[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
-                    var packages = Enumerable.Select(strings,
+                    var packages = strings.Select(
                         temp => temp.Split(new[] { ":" }, StringSplitOptions.None)[1]
                     );
                     foreach (var package in packages)
@@ -779,6 +834,16 @@ namespace ApplicationManager.ViewModels
             //删除生成的Temp文件夹下面的文件
             directory.DeleteDirectoryFiles();
             IsTaskBusy = false;
+        }
+
+        /// <summary>
+        /// 普通提示框
+        /// </summary>
+        /// <param name="title"></param>
+        /// <param name="message"></param>
+        private void ShowAlertMessageDialog(string title, string message)
+        {
+            MessageBox.Show(message, title, MessageBoxButton.OK, MessageBoxImage.Exclamation);
         }
     }
 }

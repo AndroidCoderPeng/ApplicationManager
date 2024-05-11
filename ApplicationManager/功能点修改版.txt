@@ -11,7 +11,7 @@
 ###【列表】软件权限
 ---------------------------------------------------------------------
 
-【按钮】adb install -r 覆盖安装应用（apk）
+【按钮】adb install 覆盖安装应用（apk）
 ###【按钮】adb uninstall 卸载应用（应用包名）
 【按钮】adb pull 将设备上的文件复制到电脑上
 【按钮】adb push 将电脑上的文件复制到设备上
@@ -33,4 +33,4 @@
 ###【选择设备并连接成功后，自动获取】adb shell dumpsys battery 监控电池信息
 
 【按钮】adb reboot 重启设备
-【按钮】adb disconnect <设备的IP地址>:端口号 adb断开某设备
+###【按钮】adb disconnect <设备的IP地址>:端口号 adb断开某设备

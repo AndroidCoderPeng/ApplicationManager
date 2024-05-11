@@ -18,6 +18,7 @@
 
     <Window.Resources>
         <cvt:ProgressBarVisibilityConverter x:Key="ProgressBarVisibilityKey" />
+        <cvt:ButtonStatusConverter x:Key="ButtonStatusConverterKey" />
 
         <Style x:Key="ListBoxStyleKey" TargetType="ListBoxItem">
             <Setter Property="HorizontalContentAlignment" Value="Stretch" />
@@ -347,6 +348,7 @@
                         HorizontalAlignment="Right"
                         Command="{Binding RefreshApplicationCommand}"
                         Content="刷新"
+                        IsEnabled="{Binding IsDisconnected, Converter={StaticResource ButtonStatusConverterKey}}"
                         Style="{StaticResource ButtonPrimary}" />
                 </Grid>
 
@@ -385,6 +387,7 @@
                             HorizontalAlignment="Left"
                             Command="{Binding RebootDeviceCommand}"
                             Content="重启设备"
+                            IsEnabled="{Binding IsDisconnected, Converter={StaticResource ButtonStatusConverterKey}}"
                             Style="{StaticResource ButtonSuccess}" />
 
                         <Button
@@ -403,13 +406,15 @@
                             Width="95"
                             HorizontalAlignment="Left"
                             Command="{Binding OutputImageCommand}"
-                            Content="导出截屏" />
+                            Content="导出截屏"
+                            IsEnabled="{Binding IsDisconnected, Converter={StaticResource ButtonStatusConverterKey}}" />
 
                         <Button
                             Width="95"
                             HorizontalAlignment="Right"
                             Command="{Binding ImportImageCommand}"
-                            Content="导入图片" />
+                            Content="导入图片"
+                            IsEnabled="{Binding IsDisconnected, Converter={StaticResource ButtonStatusConverterKey}}" />
                     </UniformGrid>
 
                     <Button
@@ -417,6 +422,7 @@
                         Width="200"
                         Command="{Binding ScreenshotCommand}"
                         Content="截屏"
+                        IsEnabled="{Binding IsDisconnected, Converter={StaticResource ButtonStatusConverterKey}}"
                         Style="{StaticResource ButtonPrimary}" />
                 </Grid>
             </Grid>
@@ -600,6 +606,7 @@
                             HorizontalAlignment="Left"
                             Command="{Binding UninstallCommand}"
                             Content="卸载"
+                            IsEnabled="{Binding IsDisconnected, Converter={StaticResource ButtonStatusConverterKey}}"
                             Style="{StaticResource ButtonDanger}" />
 
                         <Button
@@ -608,6 +615,7 @@
                             HorizontalAlignment="Right"
                             Command="{Binding InstallCommand}"
                             Content="安装"
+                            IsEnabled="{Binding IsDisconnected, Converter={StaticResource ButtonStatusConverterKey}}"
                             Style="{StaticResource ButtonPrimary}" />
                     </Grid>
                 </Grid>
