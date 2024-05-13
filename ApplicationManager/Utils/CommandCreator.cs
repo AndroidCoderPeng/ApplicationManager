@@ -5,9 +5,11 @@ namespace ApplicationManager.Utils
 {
     public class CommandCreator : List<string>
     {
-        public CommandCreator Init()
+        public CommandCreator Init(string device)
         {
             Clear();
+            Add("-s");
+            Add(device);
             return this;
         }
 

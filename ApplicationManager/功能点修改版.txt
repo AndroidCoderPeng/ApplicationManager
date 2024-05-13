@@ -11,24 +11,23 @@
 ###【列表】软件权限
 ---------------------------------------------------------------------
 
-###【按钮】adb install -r 覆盖安装应用（apk）
-###【按钮】adb uninstall 卸载应用（应用包名）
+###【按钮】adb -s <设备序列号> install  -r 覆盖安装应用（apk）
+###【按钮】adb -s <设备序列号> uninstall 卸载应用（应用包名）
 
-###【选择设备并连接成功后，自动获取】adb shell pm list package -3 列出第三方的应用
+###【选择设备并连接成功后，自动获取】adb -s <设备序列号> shell pm list package -3 列出第三方的应用
 
-###【按钮】adb shell screencap -p /sdcard/screen.png 截取屏幕截图并保存到指定位置
+###【按钮】adb -s <设备序列号> shell screencap -p /sdcard/screen.png 截取屏幕截图并保存到指定位置
 
-###【选择设备并连接成功后，自动获取】adb shell settings get secure android_id 查看android id
-###【选择设备并连接成功后，自动获取】adb shell getprop ro.product.model 获取设备型号
-###【选择设备并连接成功后，自动获取】adb shell getprop ro.product.brand 获取设备品牌
-###【选择设备并连接成功后，自动获取】adb shell getprop ro.product.name 获取设备名称
-###【选择设备并连接成功后，自动获取】adb shell getprop ro.product.board 获取处理器型号
-###【选择设备并连接成功后，自动获取】adb shell getprop ro.product.cpu.abilist 获取CPU支持的abi架构列表
-###【选择设备并连接成功后，自动获取】adb shell getprop ro.build.version.release 获取设备Android系统版本
-###【选择设备并连接成功后，自动获取】adb shell wm size 获取设备屏幕分辨率
-###【选择设备并连接成功后，自动获取】adb shell wm density 获取设备屏幕密度
-###【选择设备并连接成功后，自动获取】adb shell cat /proc/meminfo 获取手机内存信息
-###【选择设备并连接成功后，自动获取】adb shell dumpsys battery 监控电池信息
+###【选择设备并连接成功后，自动获取】adb -s <设备序列号> shell settings get secure android_id 查看android id
+###【选择设备并连接成功后，自动获取】adb -s <设备序列号> shell getprop ro.product.model 获取设备型号
+###【选择设备并连接成功后，自动获取】adb -s <设备序列号> shell getprop ro.product.brand 获取设备品牌
+###【选择设备并连接成功后，自动获取】adb -s <设备序列号> shell getprop ro.product.name 获取设备名称
+###【选择设备并连接成功后，自动获取】adb -s <设备序列号> shell getprop ro.product.board 获取处理器型号
+###【选择设备并连接成功后，自动获取】adb -s <设备序列号> shell getprop ro.product.cpu.abilist 获取CPU支持的abi架构列表
+###【选择设备并连接成功后，自动获取】adb -s <设备序列号> shell getprop ro.build.version.release 获取设备Android系统版本
+###【选择设备并连接成功后，自动获取】adb -s <设备序列号> shell wm size 获取设备屏幕分辨率
+###【选择设备并连接成功后，自动获取】adb -s <设备序列号> shell wm density 获取设备屏幕密度
+###【选择设备并连接成功后，自动获取】adb -s <设备序列号> shell cat /proc/meminfo 获取手机内存信息
+###【选择设备并连接成功后，自动获取】adb -s <设备序列号> shell dumpsys battery 监控电池信息
 
 ###【按钮】adb reboot 重启设备
-###【按钮】adb disconnect <设备的IP地址>:端口号 adb断开某设备

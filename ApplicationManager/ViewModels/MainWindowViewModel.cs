@@ -318,18 +318,6 @@ namespace ApplicationManager.ViewModels
             }
         }
 
-        private bool _isDisconnected = true;
-
-        public bool IsDisconnected
-        {
-            get => _isDisconnected;
-            set
-            {
-                _isDisconnected = value;
-                RaisePropertyChanged();
-            }
-        }
-
         #endregion
 
         #region DelegateCommand
@@ -339,7 +327,6 @@ namespace ApplicationManager.ViewModels
         public DelegateCommand RefreshApplicationCommand { set; get; }
         public DelegateCommand<string> PackageSelectedCommand { set; get; }
         public DelegateCommand RebootDeviceCommand { set; get; }
-        public DelegateCommand DisconnectDeviceCommand { set; get; }
         public DelegateCommand ScreenshotCommand { set; get; }
         public DelegateCommand<DragEventArgs> DropFileCommand { set; get; }
         public DelegateCommand SelectFileCommand { set; get; }
@@ -393,7 +380,6 @@ namespace ApplicationManager.ViewModels
                 //另起线程获取第三方应用列表
                 GetDeviceApplication();
 
-                IsDisconnected = false;
                 if (!_refreshDeviceDetailTimer.Enabled)
                 {
                     _refreshDeviceDetailTimer.Enabled = true;
@@ -420,20 +406,8 @@ namespace ApplicationManager.ViewModels
                 {
                     var creator = new CommandCreator();
                     //adb reboot 重启设备
-                    var rebootCommand = creator.Init().Append("reboot").Append(_selectedDevice).Build();
+                    var rebootCommand = creator.Init(_selectedDevice).Append("reboot").Append(_selectedDevice).Build();
                     CommandManager.Get.ExecuteCommand(rebootCommand, ResetValue);
-                }
-            });
-
-            DisconnectDeviceCommand = new DelegateCommand(delegate
-            {
-                var result = MessageBox.Show("确定断开连接该设备？", "断开连接", MessageBoxButton.OKCancel, MessageBoxImage.Question);
-                if (result == MessageBoxResult.OK)
-                {
-                    var creator = new CommandCreator();
-                    //adb disconnect 设备号 adb断开某设备
-                    var disconnectCommand = creator.Init().Append("disconnect").Append(_selectedDevice).Build();
-                    CommandManager.Get.ExecuteCommand(disconnectCommand, ResetValue);
                 }
             });
 
@@ -488,8 +462,9 @@ namespace ApplicationManager.ViewModels
                 if (result == MessageBoxResult.OK)
                 {
                     var creator = new CommandCreator();
-                    //adb uninstall 卸载应用（应用包名）
-                    var uninstallCommand = creator.Init().Append("uninstall").Append(_selectedPackage).Build();
+                    //adb -s <设备序列号> uninstall 卸载应用（应用包名）
+                    var uninstallCommand = creator.Init(_selectedDevice)
+                        .Append("uninstall").Append(_selectedPackage).Build();
                     CommandManager.Get.ExecuteCommand(uninstallCommand, delegate(string value)
                     {
                         Growl.Success(value);
@@ -558,8 +533,6 @@ namespace ApplicationManager.ViewModels
             BatteryTemperature = string.Empty;
 
             ApplicationPackages.Clear();
-
-            IsDisconnected = value.Contains("disconnected");
         }
 
         /// <summary>
@@ -569,37 +542,42 @@ namespace ApplicationManager.ViewModels
         {
             var creator = new CommandCreator();
             //adb shell settings get secure android_id 查看android id
-            var androidIdCommand = creator.Init()
+            var androidIdCommand = creator.Init(_selectedDevice)
                 .Append("shell").Append("settings").Append("get").Append("secure").Append("android_id").Build();
             CommandManager.Get.ExecuteCommand(androidIdCommand, delegate(string value) { AndroidId = value; });
 
             //adb shell getprop ro.product.model 获取设备型号
-            var modelCommand = creator.Init().Append("shell").Append("getprop").Append("ro.product.model").Build();
+            var modelCommand = creator.Init(_selectedDevice)
+                .Append("shell").Append("getprop").Append("ro.product.model").Build();
             CommandManager.Get.ExecuteCommand(modelCommand, delegate(string value) { DeviceModel = value; });
 
             //adb shell getprop ro.product.brand 获取设备品牌
-            var brandCommand = creator.Init().Append("shell").Append("getprop").Append("ro.product.brand").Build();
+            var brandCommand = creator.Init(_selectedDevice)
+                .Append("shell").Append("getprop").Append("ro.product.brand").Build();
             CommandManager.Get.ExecuteCommand(brandCommand, delegate(string value) { DeviceBrand = value; });
 
             //adb shell getprop ro.product.name 获取设备名称
-            var nameCommand = creator.Init().Append("shell").Append("getprop").Append("ro.product.name").Build();
+            var nameCommand = creator.Init(_selectedDevice)
+                .Append("shell").Append("getprop").Append("ro.product.name").Build();
             CommandManager.Get.ExecuteCommand(nameCommand, delegate(string value) { DeviceName = value; });
 
             //adb shell getprop ro.product.board 获取处理器型号
-            var boardCommand = creator.Init().Append("shell").Append("getprop").Append("ro.product.board").Build();
+            var boardCommand = creator.Init(_selectedDevice)
+                .Append("shell").Append("getprop").Append("ro.product.board").Build();
             CommandManager.Get.ExecuteCommand(boardCommand, delegate(string value) { DeviceCpu = value; });
 
             //adb shell getprop ro.product.cpu.abilist 获取CPU支持的abi架构列表
-            var abiCommand = creator.Init().Append("shell").Append("getprop").Append("ro.product.cpu.abilist").Build();
+            var abiCommand = creator.Init(_selectedDevice)
+                .Append("shell").Append("getprop").Append("ro.product.cpu.abilist").Build();
             CommandManager.Get.ExecuteCommand(abiCommand, delegate(string value) { DeviceAbi = value; });
 
             //adb shell getprop ro.build.version.release 获取设备Android系统版本
-            var versionCommand = creator.Init()
+            var versionCommand = creator.Init(_selectedDevice)
                 .Append("shell").Append("getprop").Append("ro.build.version.release").Build();
             CommandManager.Get.ExecuteCommand(versionCommand, delegate(string value) { AndroidVersion = value; });
 
             //adb shell wm size 获取设备屏幕分辨率
-            var sizeCommand = creator.Init().Append("shell").Append("wm").Append("size").Build();
+            var sizeCommand = creator.Init(_selectedDevice).Append("shell").Append("wm").Append("size").Build();
             CommandManager.Get.ExecuteCommand(sizeCommand, delegate(string value)
             {
                 //Physical size: 1240x2772
@@ -607,7 +585,7 @@ namespace ApplicationManager.ViewModels
             });
 
             //adb shell wm density 获取设备屏幕密度
-            var densityCommand = creator.Init().Append("shell").Append("wm").Append("density").Build();
+            var densityCommand = creator.Init(_selectedDevice).Append("shell").Append("wm").Append("density").Build();
             CommandManager.Get.ExecuteCommand(densityCommand, delegate(string value)
             {
                 //Physical density: 560
@@ -615,7 +593,8 @@ namespace ApplicationManager.ViewModels
             });
 
             //adb shell cat /proc/meminfo 获取手机内存信息
-            var meminfoCommand = creator.Init().Append("shell").Append("cat").Append("/proc/meminfo").Build();
+            var meminfoCommand = creator.Init(_selectedDevice)
+                .Append("shell").Append("cat").Append("/proc/meminfo").Build();
             CommandManager.Get.ExecuteCommand(meminfoCommand, delegate(string value)
             {
                 var dictionary = value.ToDictionary();
@@ -649,7 +628,8 @@ namespace ApplicationManager.ViewModels
             });
 
             //adb shell dumpsys battery 监控电池信息
-            var batteryCommand = creator.Init().Append("shell").Append("dumpsys").Append("battery").Build();
+            var batteryCommand = creator.Init(_selectedDevice)
+                .Append("shell").Append("dumpsys").Append("battery").Build();
             CommandManager.Get.ExecuteCommand(batteryCommand, delegate(string value)
             {
                 var dictionary = value.ToDictionary();
@@ -699,7 +679,7 @@ namespace ApplicationManager.ViewModels
                 var result = new ObservableCollection<string>();
                 var creator = new CommandCreator();
                 //adb shell pm list package -3 列出第三方的应用
-                var packageCommand = creator.Init()
+                var packageCommand = creator.Init(_selectedDevice)
                     .Append("shell").Append("pm").Append("list").Append("package").Append("-3").Build();
                 CommandManager.Get.ExecuteCommand(packageCommand, delegate(string value)
                 {
@@ -724,7 +704,7 @@ namespace ApplicationManager.ViewModels
         {
             var creator = new CommandCreator();
             //adb shell screencap -p /sdcard/screen.png 截取屏幕截图并保存到指定位置
-            var screenCapCommand = creator.Init()
+            var screenCapCommand = creator.Init(_selectedDevice)
                 .Append("shell").Append("screencap").Append("-p")
                 .Append($"/sdcard/{DateTime.Now:yyyyMMddHHmmss}.png").Build();
             var result = "";
@@ -750,8 +730,8 @@ namespace ApplicationManager.ViewModels
             }
 
             var creator = new CommandCreator();
-            //adb install -r 覆盖安装应用（apk）
-            var installCommand = creator.Init().Append("install").Append("-r").Append(_filePath).Build();
+            //adb -s <设备序列号> install  -r 覆盖安装应用（apk）
+            var installCommand = creator.Init(_selectedDevice).Append("install").Append("-r").Append(_filePath).Build();
             LoadingDialogHub.Get.ShowLoadingDialog(window, "软件安装中，请稍后......");
             var result = "";
             var task = Task.Run(delegate
