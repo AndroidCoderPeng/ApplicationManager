@@ -118,6 +118,8 @@
     <Compile Include="Utils\LoadingDialogHub.cs" />
     <Compile Include="Utils\MethodExtensions.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
+    <Page Include="Styles\StaticBrushResource.xaml" />
+    <Page Include="Styles\StaticColorResource.xaml" />
     <Page Include="Views\LoadingDialog.xaml" />
     <Page Include="Views\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -160,6 +162,5 @@
     <Content Include="Permissions.json" />
     <Content Include="功能点修改版.txt" />
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

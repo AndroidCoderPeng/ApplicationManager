@@ -392,14 +392,14 @@
                             Command="{Binding RebootDeviceCommand}"
                             Content="重启设备"
                             IsEnabled="{Binding IsDisconnected, Converter={StaticResource ButtonStatusConverterKey}}"
-                            Style="{StaticResource ButtonSuccess}" />
+                            Style="{StaticResource ButtonPrimary}" />
 
                         <Button
                             Width="95"
                             HorizontalAlignment="Right"
                             Command="{Binding DisconnectDeviceCommand}"
                             Content="断开设备"
-                            Style="{StaticResource ButtonWarning}" />
+                            Style="{StaticResource ButtonDanger}" />
                     </UniformGrid>
 
                     <Button
@@ -408,8 +408,7 @@
                         Margin="0,10,0,0"
                         Command="{Binding ScreenshotCommand}"
                         Content="截屏"
-                        IsEnabled="{Binding IsDisconnected, Converter={StaticResource ButtonStatusConverterKey}}"
-                        Style="{StaticResource ButtonPrimary}" />
+                        IsEnabled="{Binding IsDisconnected, Converter={StaticResource ButtonStatusConverterKey}}" />
                 </Grid>
             </Grid>
 
