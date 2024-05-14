@@ -676,7 +676,7 @@ namespace ApplicationManager.ViewModels
             ApplicationPackages = new ObservableCollection<string>();
             var task = Task.Run(delegate
             {
-                var result = new ObservableCollection<string>();
+                var result = new List<string>();
                 var creator = new CommandCreator();
                 //adb shell pm list package -3 列出第三方的应用
                 var packageCommand = creator.Init(_selectedDevice)
@@ -687,14 +687,16 @@ namespace ApplicationManager.ViewModels
                     var packages = strings.Select(
                         temp => temp.Split(new[] { ":" }, StringSplitOptions.None)[1]
                     );
-                    foreach (var package in packages)
-                    {
-                        result.Add(package);
-                    }
+                    result.AddRange(packages);
                 });
+                //排序
+                result.Sort();
                 return result;
             });
-            ApplicationPackages = await task;
+            foreach (var s in await task)
+            {
+                ApplicationPackages.Add(s);
+            }
         }
 
         /// <summary>
